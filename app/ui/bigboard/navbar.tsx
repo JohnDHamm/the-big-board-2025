@@ -38,7 +38,7 @@ const Navbar = () => {
             key={link.name}
             href={link.href}
             className={clsx(
-              'hover:text-blue-600',
+              'text-white hover:text-blue-600',
               {
                 'text-yellow-300': pathname === link.href,
               },
