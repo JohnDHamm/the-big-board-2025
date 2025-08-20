@@ -8,3 +8,5 @@ interface Position_Slot {
 }
 
 type DraftStatus = 'not started' | 'open' | 'paused' | 'done';
+
+type LeagueListItem = Pick<League, '_id' | 'name'>;

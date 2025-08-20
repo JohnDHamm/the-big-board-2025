@@ -1,12 +1,11 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { League } from "@/app/(models)/League";
 
 const LeagueDropdown = () => {
-  const [leaguesList, setLeaguesList] = useState<League[]>([]);
+  const [leaguesList, setLeaguesList] = useState<LeagueListItem[]>([]);
 
-  const getLeagues = async() => { 
+  const getLeaguesList = async() => { 
     const contentType = "application/json";
 
     if (process.env.NODE_ENV === 'production') {
@@ -31,15 +30,16 @@ const LeagueDropdown = () => {
   }
 
   const initLeagues = async () => {
-    const { leagues } = await getLeagues();
-    if (leagues) {
-      setLeaguesList(leagues);
+    const { leaguesList } = await getLeaguesList();
+    console.log("leaguesList", leaguesList);
+    if (leaguesList) {
+      setLeaguesList(leaguesList);
     }
   }
 
   const getSelectOptions = (): string[] => {
     const options: string[] = [];
-    leaguesList.forEach((league: League) => {
+    leaguesList.forEach((league: LeagueListItem) => {
         options.push(league.name);
       });
     return options;
