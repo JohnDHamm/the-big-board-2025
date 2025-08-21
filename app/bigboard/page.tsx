@@ -5,8 +5,7 @@ export default async function Page() {
  
   return (
     <main>
-      <div>
-        <p>Big Board - loading?</p>
+      <div className="pt-5">
         <LoadingBlock />
       </div>
     </main>

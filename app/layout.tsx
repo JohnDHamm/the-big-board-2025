@@ -3,7 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import {
+  CurrentPickProvider,
+  DraftProvider,
   DraftStatusProvider,
+  MyTeamProvider,
+  PicksProvider,
   PlayersProvider,
   TeamsProvider,
   UserProvider
@@ -37,15 +41,23 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
-          <DraftStatusProvider>
-            <TeamsProvider>
-              <PlayersProvider>
-                <SocketListener>
-                  {children}
-                </SocketListener>
-              </PlayersProvider>
-            </TeamsProvider>
-          </DraftStatusProvider>
+          <CurrentPickProvider>
+            <DraftProvider>
+              <DraftStatusProvider>
+                <TeamsProvider>
+                  <PlayersProvider>
+                    <PicksProvider>
+                      <MyTeamProvider>
+                        <SocketListener>
+                          {children}
+                        </SocketListener>
+                      </MyTeamProvider>
+                    </PicksProvider>
+                  </PlayersProvider>
+                </TeamsProvider>
+              </DraftStatusProvider>
+            </DraftProvider>
+          </CurrentPickProvider>
         </UserProvider>
       </body>
     </html>
