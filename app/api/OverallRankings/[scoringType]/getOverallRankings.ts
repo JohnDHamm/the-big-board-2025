@@ -1,8 +1,8 @@
-const getPlayers = async () => {
+const getOverallRankings = async(scoringType: ScoringType) => {
   const contentType = "application/json";
 
     try {
-      const res = await fetch(`/api/Players`, {
+      const res = await fetch(`/api/OverallRankings/${scoringType}`, {
         method: "GET",
         headers: {
           Accept: contentType,
@@ -12,9 +12,8 @@ const getPlayers = async () => {
       })
       return res.json();
     } catch (error) {
-      console.log('Failed to get players', error);
+      console.log('Failed to get overall rankings', error);
     }
   }
 
-  export default getPlayers;
-  
+  export default getOverallRankings;

@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useContext } from 'react';
 import getLeague from '@/app/api/Leagues/[id]/getLeague';
+import getOverallRankings from '@/app/api/OverallRankings/[scoringType]/getOverallRankings';
 import getOwners from '@/app/api/Owners/[id]/getOwners';
+import getPicks from '@/app/api/Picks/[leagueId]/getPicks';
 import getPlayers from '@/app/api/Players/getPlayers';
 import getPositionRankings from '@/app/api/PositionRankings/[scoringType]/getPositionRankings';
 import getTeams from '@/app/api/Teams/getTeams';
@@ -52,14 +54,14 @@ const LoadingBlock = () => {
         .then((posRanks: SavedPositionRanking[]) => {
           setSavedPositionRankings(posRanks);
         })
-        // .then(() => getOverallRankings(scoringType))
-        // .then((overRanks) => {
-        //   setSavedOverallRankings(overRanks);
-        // })
-        // .then(() => getPicks(league._id))
-        // .then((leaguePicks: DraftPick[]) => {
-        //   setSavedPicks(leaguePicks);
-        // })
+        .then(() => getOverallRankings(scoringType))
+        .then((overRanks: SavedOverallRanking[]) => {
+          setSavedOverallRankings(overRanks);
+        })
+        .then(() => getPicks(league._id))
+        .then((leaguePicks: DraftPick[]) => {
+          setSavedPicks(leaguePicks);
+        })
         .catch((err) => console.log('err', err));
     }
   }, [league]);
@@ -116,8 +118,8 @@ const LoadingBlock = () => {
   }, [savedPlayers]);
 
   useEffect(() => {
-    console.log('savedPositionRankings', savedPositionRankings);
-  }, [savedPositionRankings])
+    console.log('savedPicks', savedPicks);
+  }, [savedPicks])
 
   const getColor = (condition: boolean) => {
     return condition ? 'text-[#bada55]' : 'text-gray-300';
@@ -131,9 +133,9 @@ const LoadingBlock = () => {
       <p className={`${getColor(teamsAreReady)}`}>NFL TEAMS</p>
       <p className={`${getColor(savedPlayers.length !== 0)}`}>PLAYERS</p>
       <p className={`${getColor(savedPositionRankings.length !== 0)}`}>POSITION RANKINGS</p>
+      <p className={`${getColor(savedOverallRankings.length !== 0)}`}>OVERALL RANKINGS</p>
     </div>
   )
-
 }
 
 export default LoadingBlock;

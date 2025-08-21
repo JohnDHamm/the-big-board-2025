@@ -1,8 +1,8 @@
-const getPlayers = async () => {
-  const contentType = "application/json";
+const getPicks = async(leagueId: string) => { 
+    const contentType = "application/json";
 
     try {
-      const res = await fetch(`/api/Players`, {
+      const res = await fetch(`/api/Picks/${leagueId}`, {
         method: "GET",
         headers: {
           Accept: contentType,
@@ -12,9 +12,9 @@ const getPlayers = async () => {
       })
       return res.json();
     } catch (error) {
-      console.log('Failed to get players', error);
+      console.log('Failed to get picks', error);
     }
   }
 
-  export default getPlayers;
+  export default getPicks;
   

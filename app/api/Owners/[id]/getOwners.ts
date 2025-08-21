@@ -12,7 +12,7 @@ const getOwners = async(leagueId: string) => {
       })
       return res.json();
     } catch (error) {
-      console.log('Failed to get leagues', error);
+      console.log('Failed to get owners', error);
     }
   }
 
