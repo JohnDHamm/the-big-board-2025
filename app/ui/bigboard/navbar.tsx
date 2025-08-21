@@ -20,7 +20,7 @@ const Navbar = () => {
   
   if (user?.isCommish) {
     links.push(
-      { name: 'OTHER', href: '/bigboard/other'}
+      { name: 'MORE', href: '/bigboard/more'}
     )
   }
 
