@@ -1,4 +1,4 @@
-import calcTotalRounds from "./calTotalRounds";
+import calcTotalRounds from "./calcTotalRounds";
 
 export {
   calcTotalRounds,
