@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
+    "lodash.isempty": "^4.4.0",
+    "lodash.keyby": "^4.6.0",
     "mongoose": "^8.17.1",
     "next": "15.4.6",
     "react": "19.1.0",
@@ -20,6 +22,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/lodash.isempty": "^4.4.9",
+    "@types/lodash.keyby": "^4.6.9",
     "@types/node": "^20.19.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",

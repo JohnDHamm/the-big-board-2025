@@ -9,14 +9,6 @@ declare global {
   }
 }
 
-export const tempUser: User = {
-  _id: "1",
-  name: 'Johnny',
-  leagueId: 'test league',
-  isCommish: true,
-  accessToken: 'token',
-}
-
 export const USER_DEFAULT_VALUE: UserContextInterface = {
   user: null,
   setCurrentUser: () => {},

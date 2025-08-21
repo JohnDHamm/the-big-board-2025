@@ -1,37 +1,13 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import getLeaguesList from "@/app/api/Leagues/getLeaguesList";
 
 const LeagueDropdown = () => {
   const [leaguesList, setLeaguesList] = useState<LeagueListItem[]>([]);
 
-  const getLeaguesList = async() => { 
-    const contentType = "application/json";
-
-    if (process.env.NODE_ENV === 'production') {
-      console.log('NODE_ENV is set to production.');
-    } else {
-      console.log('NODE_ENV is not set to production. Current value:', process.env.NODE_ENV);
-    }
-
-    try {
-      const res = await fetch(`/api/Leagues`, {
-        method: "GET",
-        headers: {
-          Accept: contentType,
-          "Content-Type": contentType,
-        },
-        cache: 'no-store',
-      })
-      return res.json();
-    } catch (error) {
-      console.log('Failed to get leagues', error);
-    }
-  }
-
   const initLeagues = async () => {
-    const { leaguesList } = await getLeaguesList();
-    console.log("leaguesList", leaguesList);
+    const leaguesList: LeagueListItem[] = await getLeaguesList();
     if (leaguesList) {
       setLeaguesList(leaguesList);
     }
@@ -61,14 +37,18 @@ const LeagueDropdown = () => {
 
   return (
     <div>
-      <label>choose league:</label>
-          {/* {leaguesList && leaguesList.map(league => (
-            <p key={league.name}>{league.name}</p>
-          ))
-        } */}
-      <select name="leagues" id="league-select">
-        {leaguesList && renderOptions()}
-      </select>
+      {leaguesList.length ? (
+        <div>
+          <label>choose league:</label>
+          <select name="leagues" id="league-select">
+            {renderOptions()}
+          </select>
+        </div>
+      ) : (
+        <div>
+          <p>loading leagues...</p>
+        </div>
+      )}
     </div>
   )
 }

@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { UserProvider } from "./contexts";
+import {
+  DraftStatusProvider,
+  PlayersProvider,
+  TeamsProvider,
+  UserProvider
+ } from "./contexts";
 import SocketListener from "@/app/sockets/SocketListener";
 
 const geistSans = Geist({
@@ -32,9 +37,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
-          <SocketListener>
-            {children}
-          </SocketListener>
+          <DraftStatusProvider>
+            <TeamsProvider>
+              <PlayersProvider>
+                <SocketListener>
+                  {children}
+                </SocketListener>
+              </PlayersProvider>
+            </TeamsProvider>
+          </DraftStatusProvider>
         </UserProvider>
       </body>
     </html>

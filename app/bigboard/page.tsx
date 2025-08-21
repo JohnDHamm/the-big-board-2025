@@ -1,4 +1,5 @@
-import TestButton from "../ui/tests/TestButton";
+import LoadingBlock from "../ui/dashboard/LoadingBlock";
+
 
 export default async function Page() {
  
@@ -6,7 +7,7 @@ export default async function Page() {
     <main>
       <div>
         <p>Big Board - loading?</p>
-        <TestButton text="test post message" />
+        <LoadingBlock />
       </div>
     </main>
   );

@@ -1,7 +1,5 @@
 type ScoringType = 'ppr' | 'non-ppr';
 
-type NFL_Position = 'QB' | 'RB' | 'WR' | 'TE' | 'D' | 'K';
-
 interface Position_Slot {
   position: NFL_Position;
   total: number;
@@ -10,3 +8,12 @@ interface Position_Slot {
 type DraftStatus = 'not started' | 'open' | 'paused' | 'done';
 
 type LeagueListItem = Pick<League, '_id' | 'name'>;
+
+interface League {
+  _id: string;
+  name: string;
+  scoringType: ScoringType;
+  positionSlots: Position_Slot[];
+  draftOrder: string[];
+  draftStatus: DraftStatus;
+}
