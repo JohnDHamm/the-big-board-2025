@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import getLeague from '@/app/api/Leagues/[id]/getLeague';
 import getOwners from '@/app/api/Owners/[id]/getOwners';
 import getPlayers from '@/app/api/Players/getPlayers';
+import getPositionRankings from '@/app/api/PositionRankings/[scoringType]/getPositionRankings';
 import getTeams from '@/app/api/Teams/getTeams';
 
 import {
@@ -34,8 +35,34 @@ const LoadingBlock = () => {
   });
   const [owners, setOwners] = useState<Owner[]>([]);
   const [savedPlayers, setSavedPlayers] = useState<Player[]>([]);
+  const [savedPicks, setSavedPicks] = useState<DraftPick[] | null>(null);
+  const [savedPositionRankings, setSavedPositionRankings] = useState<
+    SavedPositionRanking[]
+  >([]);
+  const [savedOverallRankings, setSavedOverallRankings] = useState<
+    SavedOverallRanking[]
+  >([]);
   const [teamsAreReady, setTeamsAreReady] = useState<boolean>(false);
 
+  // get all rankings and picks
+  useEffect(() => {
+    if (league._id.length > 0) {
+      const { scoringType } = league;
+      getPositionRankings(scoringType)
+        .then((posRanks: SavedPositionRanking[]) => {
+          setSavedPositionRankings(posRanks);
+        })
+        // .then(() => getOverallRankings(scoringType))
+        // .then((overRanks) => {
+        //   setSavedOverallRankings(overRanks);
+        // })
+        // .then(() => getPicks(league._id))
+        // .then((leaguePicks: DraftPick[]) => {
+        //   setSavedPicks(leaguePicks);
+        // })
+        .catch((err) => console.log('err', err));
+    }
+  }, [league]);
 
   // get league and owners, set draft status
   useEffect(() => {
@@ -44,7 +71,7 @@ const LoadingBlock = () => {
       getLeague(user.leagueId)
         .then((userLeague: League) => {
           if (userLeague) {
-            console.log('userLeague', userLeague);
+            // console.log('userLeague', userLeague);
             setLeague(userLeague);
             setCurrentDraftStatus(userLeague.draftStatus);
           }
@@ -63,10 +90,10 @@ const LoadingBlock = () => {
   useEffect(() => {
     getTeams()
       .then(((teams: NFL_Team[]) => {
-        console.log("teams:", teams);
+        // console.log("teams:", teams);
         if (!isEmpty(teams)) {
           const formatTeams: Teams = keyBy(teams, '_id');
-          console.log("formatTeams:", formatTeams);
+          // console.log("formatTeams:", formatTeams);
           setCurrentTeams(formatTeams);
           setTimeout(() => {
             setTeamsAreReady(true);
@@ -81,12 +108,16 @@ const LoadingBlock = () => {
   }, [setCurrentTeams]);
 
   useEffect(()=> {
-    console.log('owners', owners);
+    // console.log('owners', owners);
   }, [owners])
 
   useEffect(() => {
-    console.log('savedPlayers', savedPlayers);
+    // console.log('savedPlayers', savedPlayers);
   }, [savedPlayers]);
+
+  useEffect(() => {
+    console.log('savedPositionRankings', savedPositionRankings);
+  }, [savedPositionRankings])
 
   const getColor = (condition: boolean) => {
     return condition ? 'text-[#bada55]' : 'text-gray-300';
@@ -98,6 +129,8 @@ const LoadingBlock = () => {
       <p className={`${getColor(league.name.length !== 0)}`}>getting league...</p>
       {league && <p className="text-[#bada55]">{league.name}</p>}
       <p className={`${getColor(teamsAreReady)}`}>NFL TEAMS</p>
+      <p className={`${getColor(savedPlayers.length !== 0)}`}>PLAYERS</p>
+      <p className={`${getColor(savedPositionRankings.length !== 0)}`}>POSITION RANKINGS</p>
     </div>
   )
 
