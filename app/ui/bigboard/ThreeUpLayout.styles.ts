@@ -3,7 +3,6 @@ import { HEIGHTS, SCREEN_WIDTHS } from '@/app/styles';
 
 export const Container = styled.div`
   width: 100%;
-  padding-top: ${HEIGHTS.NAVBAR_DESKTOP};
   padding-bottom: calc(${HEIGHTS.BOTTOM_TICKER} + 2rem);
   display: flex;
   justify-content: center;
