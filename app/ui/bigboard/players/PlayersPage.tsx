@@ -18,6 +18,7 @@ import getPicks from '@/app/api/Picks/[leagueId]/getPicks';
 
 import { CurrentPickContext, DraftContext, MyTeamContext, PlayersContext, TeamsContext, UserContext } from '@/app/contexts';
 import HighestAvailablePlayers from './HighestAvailablePlayers';
+import MyDraftNeeds from './MyDraftNeeds';
 
 type Sorting = 'RANK' | 'A-Z' | 'TEAM';
 const sortTypes: Sorting[] = ['RANK', 'A-Z', 'TEAM'];
@@ -54,6 +55,9 @@ const PlayersPage: React.FC = () => {
   >([]);
   const [sorting, setSorting] = React.useState<Sorting | ''>('');
   const [hideSelected, setHideSelected] = React.useState<boolean>(false);
+  const [myNeeds, setMyNeeds] = React.useState<PositionNeeds>();
+
+
   const hasOpenPositionSlot = (position: NFL_Position): boolean => {
     // const numSlots =
     //   find(draft.league.positionSlots, { position: position })?.total || 0;
@@ -154,6 +158,17 @@ const PlayersPage: React.FC = () => {
     updateLocalStorage(SETTINGS_KEYS.HIDE_SELECTED, newValue);
     setHideSelected(newValue);
   };
+
+  React.useEffect(() => {
+    const needs: PositionNeeds = { QB: 0, RB: 0, WR: 0, TE: 0, D: 0, K: 0 };
+    draft.league.positionSlots.forEach((slot) => {
+      const myPosPicks = myTeam.filter(
+        (player) => players[player.playerId].position === slot.position
+      );
+      needs[slot.position] = slot.total - myPosPicks.length;
+    });
+    setMyNeeds(needs);
+  }, [players, myTeam, draft, setMyNeeds]);
 
 
   React.useEffect(() => {
@@ -262,7 +277,9 @@ const PlayersPage: React.FC = () => {
         </MobileContentContainer>
       }
       right={
-        <ContentPadding>My Draft Needs</ContentPadding>
+        <ContentPadding>
+          {myNeeds && <MyDraftNeeds myPositionNeeds={myNeeds} />}
+        </ContentPadding>
       }
     />
   );
