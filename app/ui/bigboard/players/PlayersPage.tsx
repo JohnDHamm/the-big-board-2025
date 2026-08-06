@@ -5,7 +5,6 @@ import React from 'react';
 // import find from 'lodash.find';
 
 import PlayerCard from "@/app/ui/bigboard/players/PlayerCard";
-import { mockPlayer1, mockPlayer2, mockTeamARI, mockTeamBUF } from "@/app/mock_data";
 import ThreeUpLayout from "@/app/ui/bigboard/ThreeUpLayout";
 import MobileContentContainer from "@/app/ui/bigboard/MobileContentContainer";
 import { ContentPadding } from "@/app/ui/bigboard/players/PlayersPage.styles";
@@ -18,6 +17,7 @@ import getPicks from '@/app/api/Picks/[leagueId]/getPicks';
 // import updateDraftStatus from ''
 
 import { CurrentPickContext, DraftContext, MyTeamContext, PlayersContext, TeamsContext, UserContext } from '@/app/contexts';
+import HighestAvailablePlayers from './HighestAvailablePlayers';
 
 type Sorting = 'RANK' | 'A-Z' | 'TEAM';
 const sortTypes: Sorting[] = ['RANK', 'A-Z', 'TEAM'];
@@ -49,6 +49,9 @@ const PlayersPage: React.FC = () => {
     NFL_Position[]
   >([]);
   const [canMakePick, setCanMakePick] = React.useState<boolean>(false);
+  const [overallPlayersList, setOverallPlayersList] = React.useState<
+    HighestRankPlayer[]
+  >([]);
   const [sorting, setSorting] = React.useState<Sorting | ''>('');
   const [hideSelected, setHideSelected] = React.useState<boolean>(false);
   const hasOpenPositionSlot = (position: NFL_Position): boolean => {
@@ -154,6 +157,30 @@ const PlayersPage: React.FC = () => {
 
 
   React.useEffect(() => {
+    const availPlayers: PlayerInfo[] = [];
+    for (const key in players) {
+      if (players[key].available && players[key].overallRank) {
+        availPlayers.push(players[key]);
+      }
+    }
+    // const sortedPlayers = sortBy(availPlayers, ['overallRank']);
+    const overallRankPlayers: HighestRankPlayer[] = [];
+
+    // sortedPlayers.forEach((player: PlayerInfo) => {
+    availPlayers.forEach((player: PlayerInfo) => { //test UI
+      if (player.overallRank) {
+        overallRankPlayers.push({
+          name: `${player.firstName} ${player.lastName}`,
+          rank: player.overallRank,
+          teamAbbv: teams[player.teamId].abbv,
+          position: player.position,
+        });
+      }
+    });
+    setOverallPlayersList(overallRankPlayers.slice(0, 100));
+  }, [players, teams]);
+
+  React.useEffect(() => {
     const list: PlayerInfo[] = [];
     for (const key in players) {
       selectedPositions.forEach((selPos) => {
@@ -209,7 +236,9 @@ const PlayersPage: React.FC = () => {
   return (
     <ThreeUpLayout
       left={
-        <ContentPadding>Highest Ranked Available Players</ContentPadding>
+        <ContentPadding>
+          <HighestAvailablePlayers players={overallPlayersList} />
+        </ContentPadding>
       }
       center={
         <MobileContentContainer>
@@ -230,18 +259,6 @@ const PlayersPage: React.FC = () => {
             onToggle={() => handleHideSelectedChange()}
           />
           <div>{players && renderPlayers()}</div>
-          {/* <PlayerCard 
-            player={mockPlayer1}
-            rank={mockPlayer1.positionRank}
-            team={mockTeamBUF}
-            selectable={true}
-          />
-          <PlayerCard 
-            player={mockPlayer2}
-            rank={mockPlayer2.positionRank}
-            team={mockTeamARI}
-            selectable={true}
-          /> */}
         </MobileContentContainer>
       }
       right={
