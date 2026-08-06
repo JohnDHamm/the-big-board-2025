@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from 'next/font/local'
 import "./globals.css";
+ 
+const blockletter = localFont({
+  src: '/assets/fonts/Blockletter.otf',
+})
+const ptSansNarrow = localFont({
+  src: '/assets/fonts/PTSansNarrow-Regular.ttf',
+})
 
 import {
   CurrentPickProvider,
@@ -14,15 +21,6 @@ import {
  } from "./contexts";
 import SocketListener from "@/app/sockets/SocketListener";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "The Big Board",
@@ -38,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${blockletter.className} ${ptSansNarrow.className} antialiased`}
       >
         <UserProvider>
           <CurrentPickProvider>

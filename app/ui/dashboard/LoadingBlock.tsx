@@ -290,7 +290,7 @@ const LoadingBlock = () => {
 
   useEffect(() => {
     if (teamsAreReady && playersAreReady && picksAreReady && myTeamIsReady) {
-      setTimeout(() => router.push('/bigboard/selections'), 1000);
+      setTimeout(() => router.push('/bigboard/players'), 1000);
     }
   }, [myTeamIsReady, playersAreReady, teamsAreReady, picksAreReady, router]);
 
