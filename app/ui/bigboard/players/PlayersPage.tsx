@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react';
-// import sortBy from 'lodash.sortby';
-// import find from 'lodash.find';
+import sortBy from 'lodash.sortby';
+import find from 'lodash.find';
 
 import PlayerCard from "@/app/ui/bigboard/players/PlayerCard";
 import ThreeUpLayout from "@/app/ui/bigboard/ThreeUpLayout";
@@ -59,13 +59,13 @@ const PlayersPage: React.FC = () => {
 
 
   const hasOpenPositionSlot = (position: NFL_Position): boolean => {
-    // const numSlots =
-    //   find(draft.league.positionSlots, { position: position })?.total || 0;
-    // const myPicks = myTeam.filter(
-    //   (pick) => players[pick.playerId].position === position
-    // ).length;
-    // return myPicks < numSlots;
-    return true; //testing UI
+    const numSlots =
+      find(draft.league.positionSlots, { position: position })?.total || 0;
+    const myPicks = myTeam.filter(
+      (pick) => players[pick.playerId].position === position
+    ).length;
+    return myPicks < numSlots;
+    // return true; //testing UI
   };
 
 
@@ -178,11 +178,11 @@ const PlayersPage: React.FC = () => {
         availPlayers.push(players[key]);
       }
     }
-    // const sortedPlayers = sortBy(availPlayers, ['overallRank']);
+    const sortedPlayers = sortBy(availPlayers, ['overallRank']);
     const overallRankPlayers: HighestRankPlayer[] = [];
 
-    // sortedPlayers.forEach((player: PlayerInfo) => {
-    availPlayers.forEach((player: PlayerInfo) => { //test UI
+    sortedPlayers.forEach((player: PlayerInfo) => {
+    // availPlayers.forEach((player: PlayerInfo) => { //test UI
       if (player.overallRank) {
         overallRankPlayers.push({
           name: `${player.firstName} ${player.lastName}`,
@@ -205,20 +205,19 @@ const PlayersPage: React.FC = () => {
       });
     }
 
-    // switch (sorting) {
-    //   case 'A-Z':
-    //     setPlayersRenderList(sortBy(list, ['lastName', 'firstName']));
-    //     break;
-    //   case 'RANK':
-    //     setPlayersRenderList(
-    //       sortBy(list, ['positionRank', 'lastName', 'firstName'])
-    //     );
-    //     break;
-    //   case 'TEAM':
-    //     setPlayersRenderList(sortBy(list, ['teamId', 'lastName', 'firstName']));
-    //     break;
-    // }
-    setPlayersRenderList(list); //UI testing
+    switch (sorting) {
+      case 'A-Z':
+        setPlayersRenderList(sortBy(list, ['lastName', 'firstName']));
+        break;
+      case 'RANK':
+        setPlayersRenderList(
+          sortBy(list, ['positionRank', 'lastName', 'firstName'])
+        );
+        break;
+      case 'TEAM':
+        setPlayersRenderList(sortBy(list, ['teamId', 'lastName', 'firstName']));
+        break;
+    }
   }, [players, selectedPositions, sorting]);
 
   React.useEffect(() => {
@@ -241,8 +240,6 @@ const PlayersPage: React.FC = () => {
       }
     }
   }, []);
-
-
 
   return (
     <ThreeUpLayout
