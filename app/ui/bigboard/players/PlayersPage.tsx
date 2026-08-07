@@ -65,7 +65,6 @@ const PlayersPage: React.FC = () => {
       (pick) => players[pick.playerId].position === position
     ).length;
     return myPicks < numSlots;
-    // return true; //testing UI
   };
 
 
@@ -182,7 +181,6 @@ const PlayersPage: React.FC = () => {
     const overallRankPlayers: HighestRankPlayer[] = [];
 
     sortedPlayers.forEach((player: PlayerInfo) => {
-    // availPlayers.forEach((player: PlayerInfo) => { //test UI
       if (player.overallRank) {
         overallRankPlayers.push({
           name: `${player.firstName} ${player.lastName}`,
