@@ -19,7 +19,7 @@ const MyDraftNeeds: React.FC<Props> = ({ myPositionNeeds }) => {
     const list: JSX.Element[] = [];
     POSITIONS.forEach((pos) => {
       list.push(
-        <NeedLine key={pos} position={pos}>
+        <NeedLine key={pos} $position={pos}>
           {pos} - {myPositionNeeds[pos]}
         </NeedLine>
       );

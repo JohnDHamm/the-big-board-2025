@@ -54,8 +54,8 @@ const MyTeamPositionBlock: React.FC<Props> = ({
   };
 
   return (
-    <PositionBlock position={position}>
-      <TitleBlock position={position}>
+    <PositionBlock $position={position}>
+      <TitleBlock $position={position}>
         <FootballContainer>
           <Football fillColor={COLORS.NFL_POSITIONS[position]}>
             <FootballText>{position}</FootballText>
