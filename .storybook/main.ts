@@ -3,6 +3,7 @@ import type { StorybookConfig } from '@storybook/nextjs-vite';
 const config: StorybookConfig = {
   "stories": [
     "../app/**/ui/bigboard/*.stories.@(ts|tsx)",
+    "../app/**/ui/dashboard/*.stories.@(ts|tsx)",
     "../app/**/ui/bigboard/**/*.stories.@(ts|tsx)"
   ],
   "addons": [

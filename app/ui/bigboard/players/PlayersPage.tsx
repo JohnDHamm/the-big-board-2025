@@ -222,10 +222,6 @@ const PlayersPage: React.FC = () => {
   }, [players, selectedPositions, sorting]);
 
   React.useEffect(() => {
-    console.log('players', players);
-  }, [players])
-
-  React.useEffect(() => {
     if (!localStorage.getItem(LS_KEY.PLAYERS_SETTINGS)) {
       setSelectedPositions(['QB']);
       setSorting('RANK');

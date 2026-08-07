@@ -26,6 +26,7 @@ import keyBy from 'lodash.keyby';
 import find from 'lodash.find';
 import concat from 'lodash.concat';
 import { calcTotalRounds } from '@/app/utils';
+import { Container, LoadBlock, LoadedText, Text } from './LoadingBlock.styles';
 
 const LoadingBlock = () => {
   const router = useRouter();
@@ -62,7 +63,6 @@ const LoadingBlock = () => {
   const [playersAreReady, setPlayersAreReady] = useState<boolean>(false);
   const [myTeamIsReady, setMyTeamIsReady] = useState<boolean>(false);
   const [picksAreReady, setPicksAreReady] = useState<boolean>(false);
-  // const [goToBoard, setGoToBoard] = useState<boolean>(false);
 
   const createCompleteDraftOrder = (
     draftOrder: string[],
@@ -138,7 +138,7 @@ const LoadingBlock = () => {
       setCurrentPlayers(formatPlayers);
       setTimeout(() => {
         setPlayersAreReady(true);
-      }, 2000);
+      }, 1000);
     }
   }, [
     savedPlayers,
@@ -198,11 +198,10 @@ const LoadingBlock = () => {
             break;
           }
         }
-        // console.log('currentPick', currentPick);
         setCurrentPicks(picksContext);
         setCurrentDraftPick(currentPick);
       }
-      setTimeout(() => setPicksAreReady(true), 3000);
+      setTimeout(() => setPicksAreReady(true), 1500);
     }
   }, [
     league,
@@ -235,12 +234,10 @@ const LoadingBlock = () => {
 
   // get league and owners, set draft status
   useEffect(() => {
-    console.log("user", user)
     if (user) {
       getLeague(user.leagueId)
         .then((userLeague: League) => {
           if (userLeague) {
-            // console.log('userLeague', userLeague);
             setLeague(userLeague);
             setCurrentDraftStatus(userLeague.draftStatus);
           }
@@ -259,14 +256,12 @@ const LoadingBlock = () => {
   useEffect(() => {
     getTeams()
       .then(((teams: NFL_Team[]) => {
-        // console.log("teams:", teams);
         if (!isEmpty(teams)) {
           const formatTeams: Teams = keyBy(teams, '_id');
-          // console.log("formatTeams:", formatTeams);
           setCurrentTeams(formatTeams);
           setTimeout(() => {
             setTeamsAreReady(true);
-          }, 1000);
+          }, 500);
         }
       }))
       .then(() => getPlayers())
@@ -276,42 +271,26 @@ const LoadingBlock = () => {
       .catch((err) => console.log('err', err));
   }, [setCurrentTeams]);
 
-  useEffect(()=> {
-    // console.log('owners', owners);
-  }, [owners])
-
-  useEffect(() => {
-    // console.log('savedPlayers', savedPlayers);
-  }, [savedPlayers]);
-
-  useEffect(() => {
-    // console.log('savedPicks', savedPicks);
-  }, [savedPicks])
-
   useEffect(() => {
     if (teamsAreReady && playersAreReady && picksAreReady && myTeamIsReady) {
-      setTimeout(() => router.push('/bigboard/selections'), 1000);
+      setTimeout(() => router.push('/bigboard/selections'), 500);
     }
   }, [myTeamIsReady, playersAreReady, teamsAreReady, picksAreReady, router]);
 
-  const getColor = (condition: boolean) => {
-    return condition ? 'text-[#bada55]' : 'text-gray-300';
-  }
-
   return (
-    <div>
-      <p>preparing draft data for</p>
-      {league && <p className={`${getColor(true)}`}>{league.name}</p>}
-      <div className="pt-2">
-        <p className={`${getColor(teamsAreReady)}`}>NFL TEAMS</p>
-        <p className={`${getColor(playersAreReady)}`}>NFL PLAYERS</p>
-        {/* <p className={`${getColor(savedPositionRankings.length !== 0)}`}>POSITION RANKINGS</p> */}
-        {/* <p className={`${getColor(savedOverallRankings.length !== 0)}`}>OVERALL RANKINGS</p> */}
-        <p className={`${getColor(picksAreReady)}`}>DRAFT SETTINGS AND PICKS</p>
-        <p className={`${getColor(myTeamIsReady)}`}>YOUR TEAM ROSTER</p>
-      </div>
-    </div>
-  )
+    <Container>
+      <Text>preparing draft data for</Text>
+      <LoadedText $loaded={true}>{league.name}</LoadedText>
+      <LoadBlock>
+        <LoadedText $loaded={teamsAreReady}>NFL TEAMS</LoadedText>
+        <LoadedText $loaded={playersAreReady}>NFL PLAYERS</LoadedText>
+        <LoadedText $loaded={picksAreReady}>
+          DRAFT SETTINGS AND PICKS
+        </LoadedText>
+        <LoadedText $loaded={myTeamIsReady}>YOUR TEAM ROSTER</LoadedText>
+      </LoadBlock>
+    </Container>
+  );
 }
 
 export default LoadingBlock;

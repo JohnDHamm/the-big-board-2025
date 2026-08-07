@@ -9,13 +9,13 @@ import {
   DraftContext,
   UserContext
 } from "@/app/contexts";
-
-
+import { usePathname } from "next/navigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { draft } = useContext(DraftContext);
   const { currentDraftPick } = useContext(CurrentPickContext);
   const { user } = useContext(UserContext);
+  const pathname = usePathname();
 
   const getCurrentOwnerName = () => {
     const currPickOwner = draft.owners.find(
@@ -28,7 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="">
-      <Navbar />
+      <Navbar disabled={pathname ==='/bigboard'}/>
       <div>{children}</div>
       <BottomTicker 
         userHasCurrentPick = {isCurrentPick || false}
