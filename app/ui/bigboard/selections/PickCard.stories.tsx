@@ -26,3 +26,12 @@ export const Default: Story = {
     "team": mockTeamBUF
   },
 };
+
+export const PickNotMade: Story = {
+  args: {
+    "selectionNumber": 2,
+    "ownerName": "Steve",
+    "player": undefined,
+    "team": undefined
+  },
+};

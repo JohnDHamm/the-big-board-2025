@@ -45,6 +45,8 @@ export const OwnerBlock = styled.div<{ $hasPick: boolean }>`
   border-radius: 21px 0 0 21px;
   border-color: ${(props) =>
     props.$hasPick ? COLORS.PRIMARY_GREEN : COLORS.DISABLED_GRAY};
+  background-color: ${(props) =>
+    props.$hasPick ? COLORS.WHITE : null };
 `;
 
 export const OwnerName = styled.p<{ $hasPick: boolean }>`
