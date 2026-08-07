@@ -1,10 +1,10 @@
+import MyTeamPage from "@/app/ui/bigboard/my-team/MyTeamPage";
+
 export default async function Page() {
  
   return (
     <main>
-      <div>
-        <p>My team</p>
-      </div>
+      <MyTeamPage />
     </main>
   );
 }
