@@ -32,8 +32,8 @@ export const RankNum = styled(BlockText)`
 
 export const Name = styled(NameText)``;
 
-export const Position = styled(BlockText)<{ position: NFL_Position }>`
-  color: ${(props) => COLORS.NFL_POSITIONS[props.position]};
+export const Position = styled(BlockText)<{ $position: NFL_Position }>`
+  color: ${(props) => COLORS.NFL_POSITIONS[props.$position]};
 `;
 
 export const Team = styled(NameText)``;

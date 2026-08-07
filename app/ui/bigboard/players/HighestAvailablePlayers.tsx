@@ -32,7 +32,7 @@ const HighestAvailablePlayers: React.FC<Props> = ({ players }) => {
         <PlayerBlock key={i}>
           <RankNum>{rank}</RankNum>
           <Name>{name}</Name>
-          <Position position={position}>{position}</Position>
+          <Position $position={position}>{position}</Position>
           <Team>{teamAbbv}</Team>
         </PlayerBlock>
       );
