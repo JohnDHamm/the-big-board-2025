@@ -10,6 +10,7 @@ const ptSansNarrow = localFont({
 })
 
 import {
+  AlertContextProvider,
   CurrentPickProvider,
   DraftProvider,
   DraftStatusProvider,
@@ -39,23 +40,25 @@ export default function RootLayout({
         className={`${blockletter.className} ${ptSansNarrow.className} antialiased`}
       >
         <UserProvider>
-          <CurrentPickProvider>
-            <DraftProvider>
-              <DraftStatusProvider>
-                <TeamsProvider>
-                  <PlayersProvider>
-                    <PicksProvider>
-                      <MyTeamProvider>
-                        <SocketListener>
-                          {children}
-                        </SocketListener>
-                      </MyTeamProvider>
-                    </PicksProvider>
-                  </PlayersProvider>
-                </TeamsProvider>
-              </DraftStatusProvider>
-            </DraftProvider>
-          </CurrentPickProvider>
+          <AlertContextProvider>
+            <CurrentPickProvider>
+              <DraftProvider>
+                <DraftStatusProvider>
+                  <TeamsProvider>
+                    <PlayersProvider>
+                      <PicksProvider>
+                        <MyTeamProvider>
+                          <SocketListener>
+                            {children}
+                          </SocketListener>
+                        </MyTeamProvider>
+                      </PicksProvider>
+                    </PlayersProvider>
+                  </TeamsProvider>
+                </DraftStatusProvider>
+              </DraftProvider>
+            </CurrentPickProvider>
+          </AlertContextProvider>
         </UserProvider>
       </body>
     </html>

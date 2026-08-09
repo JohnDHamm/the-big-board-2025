@@ -2,9 +2,11 @@
 
 import BottomTicker from "../ui/bigboard/BottomTicker";
 import Navbar from "../ui/bigboard/Navbar";
+import Alert from "../ui/bigboard/Alert";
 
 import { useContext } from "react";
 import {
+  AlertContext,
   CurrentPickContext,
   DraftContext,
   UserContext
@@ -12,6 +14,7 @@ import {
 import { usePathname } from "next/navigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const { alert } = useContext(AlertContext);
   const { draft } = useContext(DraftContext);
   const { currentDraftPick } = useContext(CurrentPickContext);
   const { user } = useContext(UserContext);
@@ -28,6 +31,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="">
+      {alert && (
+        <Alert
+          message={alert?.message}
+          type={alert?.type}
+          sticky={alert?.sticky}
+        />
+      )}
       <Navbar disabled={pathname ==='/bigboard'}/>
       <div>{children}</div>
       <BottomTicker 
