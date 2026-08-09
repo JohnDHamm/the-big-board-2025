@@ -19,15 +19,11 @@ import Input from './Input';
 import Button from './Button';
 
 import { UserContext } from '../../contexts';
-// import { login } from '../../api';
 import getLeaguesList from '@/app/api/Leagues/getLeaguesList';
-// import { socket } from '../../sockets/SocketListener/SocketListener';
 import { socket } from "@/app/sockets/socket";
 import isEmpty from 'lodash.isempty';
 import { LOCAL_STORAGE, TEST_LEAGUE_IDS } from '@/app/utils/constants';
 import { useRouter } from 'next/navigation';
-
-import { MOCK_USER } from '@/app/mock_data';
 
 const HomePage: React.FC = () => {
   const { user, setCurrentUser } = React.useContext(UserContext);
@@ -44,6 +40,8 @@ const HomePage: React.FC = () => {
   const [password, setPassword] = React.useState<string>('');
   const [errorMsg, setErrorMsg] = React.useState<string>('');
 
+  const devTesting = process.env.NODE_ENV === "development";
+  
   const initLeagues = async () => {
     const leaguesList = await getLeaguesList();
     if (leaguesList) {
@@ -99,16 +97,35 @@ const HomePage: React.FC = () => {
       //     );
       //     setCurrentUser(loggedInUser);
       //     socket.emit('JoinRoom', loggedInUser.leagueId);
-      //     history.push(ROUTES.APP);
-            // router.push('/bigboard')
+      //     socket.emit('Hello', new Date(), "mock league id");
+      //     // history.push(ROUTES.APP);
+      //     router.push('/bigboard')
       //   }
       // } catch (err) {
       //   setErrorMsg(err.message);
       // }
-      setCurrentUser(MOCK_USER);
-          socket.emit('JoinRoom', "mock league id");
-          socket.emit('Hello', "mock league id");
-          router.push('/bigboard')
+
+
+      // !_____mocking login until auth solution implemented
+      const devTestingtOwnerIds = {
+        a: "612efd69ebec27001777f328",
+        b: "612efd75ebec27001777f329",
+        c: "612efd84ebec27001777f32a"
+      };
+      const userId: string = devTestingtOwnerIds[name];
+      console.log('userId', userId);
+      
+      const loggedInUser: User =  {
+        _id: userId,
+        name: name,
+        leagueId: selectedLeagueId,
+        isCommish: name === "a",
+        accessToken: "noTokenNeeded"
+      }
+      setCurrentUser(loggedInUser);
+      socket.emit('JoinRoom', loggedInUser.leagueId);
+      socket.emit('Hello', loggedInUser.name, loggedInUser.leagueId);
+      router.push('/bigboard')
     }
   };
 
@@ -126,6 +143,13 @@ const HomePage: React.FC = () => {
   }, [password]);
 
   React.useEffect(() => {
+    if (devTesting) {
+      setShowNameInput(devTesting);
+      setSelectedLeagueId("5f3d99a25d018c175707cb4e");
+    }
+  }, [devTesting]);
+
+  React.useEffect(() => {
     initLeagues();
   }, []);
 
@@ -138,10 +162,14 @@ const HomePage: React.FC = () => {
       </TopBlock>
       <Content>
         <SignIn>SIGN IN</SignIn>
-        {isEmpty(leagues) ? (
+        {isEmpty(leagues) && (
           <LoadingMsg>Loading leagues...</LoadingMsg>
-        ) : (
+        )}
+        {!isEmpty(leagues) && !devTesting && (
           <ContentItem>{renderSelect()}</ContentItem>
+        )}
+        {devTesting && (
+          <LoadingMsg>DEV TESTING</LoadingMsg>
         )}
         {showNameInput && (
           <ContentItem>

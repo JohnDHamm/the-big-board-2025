@@ -16,7 +16,15 @@ import getPicks from '@/app/api/Picks/[leagueId]/getPicks';
 // import makePick
 // import updateDraftStatus from ''
 
-import { CurrentPickContext, DraftContext, MyTeamContext, PlayersContext, TeamsContext, UserContext } from '@/app/contexts';
+import {
+  CurrentPickContext,
+  DraftContext,
+  DraftStatusContext,
+  MyTeamContext,
+  PlayersContext,
+  TeamsContext,
+  UserContext
+} from '@/app/contexts';
 import HighestAvailablePlayers from './HighestAvailablePlayers';
 import MyDraftNeeds from './MyDraftNeeds';
 
@@ -36,6 +44,7 @@ const PlayersPage: React.FC = () => {
   const { user } = React.useContext(UserContext);
   const { currentDraftPick } = React.useContext(CurrentPickContext);
   const { draft } = React.useContext(DraftContext);
+  const { draftStatus } = React.useContext(DraftStatusContext);
   const { players } = React.useContext(PlayersContext);
   const { teams } = React.useContext(TeamsContext);
   const { myTeam } = React.useContext(MyTeamContext);
@@ -238,6 +247,12 @@ const PlayersPage: React.FC = () => {
       }
     }
   }, []);
+
+  React.useEffect(() => {
+    setCanMakePick(
+      draftStatus === 'open' && currentDraftPick.ownerId === user?._id
+    );
+  }, [draftStatus, user, currentDraftPick]);
 
   return (
     <ThreeUpLayout
