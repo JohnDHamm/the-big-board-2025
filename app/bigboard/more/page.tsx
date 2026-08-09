@@ -1,13 +1,10 @@
-import TestButton from "@/app/ui/tests/TestButton";
+import MorePage from "@/app/ui/bigboard/more/MorePage";
 
 export default async function Page() {
  
   return (
     <main>
-      <div>
-        <p>More</p>
-        <TestButton text="test post message" />
-      </div>
+      <MorePage />
     </main>
   );
 }
