@@ -7,14 +7,17 @@ import Alert from "../ui/bigboard/Alert";
 import { useContext } from "react";
 import {
   AlertContext,
+  CommishModalContext,
   CurrentPickContext,
   DraftContext,
   UserContext
 } from "@/app/contexts";
 import { usePathname } from "next/navigation";
+import CommishModal from "../ui/bigboard/CommishModal";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { alert } = useContext(AlertContext);
+  const { commishModal } = useContext(CommishModalContext);
   const { draft } = useContext(DraftContext);
   const { currentDraftPick } = useContext(CurrentPickContext);
   const { user } = useContext(UserContext);
@@ -38,6 +41,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           sticky={alert?.sticky}
         />
       )}
+      <CommishModal {...commishModal} />
       <Navbar disabled={pathname ==='/bigboard'}/>
       <div>{children}</div>
       <BottomTicker 

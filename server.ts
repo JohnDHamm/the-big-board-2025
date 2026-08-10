@@ -19,10 +19,10 @@ app.prepare().then(() => {
 
     if (socket.recovered) {
     // recovery was successful: socket.id, socket.rooms and socket.data were restored
-    console.log('_________socket recovered!!!!!!!!!!');
-  } else {
-    // new or unrecoverable session
-  }
+      console.log('_________socket recovered!!!!!!!!!!');
+    } else {
+      // new or unrecoverable session
+    }
 
     socket.on("JoinRoom", (room) => {
       console.log("__________joining room:", room)
@@ -35,6 +35,26 @@ app.prepare().then(() => {
     socket.on("Hello", (name, room) => {
       console.log('_____________hello from:', name);
       io.to(room).emit('OwnerHello', `${name} says hello!`);
+    })
+
+    socket.on("StartDraft", (message, room) => {
+      console.log('______________draft started', message);
+      io.to(room).emit("DraftStarted", message);
+    })
+    
+    socket.on("PauseDraft", (message, room) => {
+      console.log('______________draft paused', message);
+      io.to(room).emit("DraftPaused", message);
+    })
+    
+    socket.on("ReopenDraft", (message, room) => {
+      console.log('______________draft reopened', message);
+      io.to(room).emit("DraftReopened", message);
+    })
+
+    socket.on("ChangeDraftStatus", (status, room) => {
+      console.log('______________draft status changed', status);
+      io.to(room).emit("DraftStatusChanged", status);
     })
   });
 

@@ -11,6 +11,7 @@ const ptSansNarrow = localFont({
 
 import {
   AlertContextProvider,
+  CommishModalProvider,
   CurrentPickProvider,
   DraftProvider,
   DraftStatusProvider,
@@ -41,23 +42,25 @@ export default function RootLayout({
       >
         <UserProvider>
           <AlertContextProvider>
-            <CurrentPickProvider>
-              <DraftProvider>
-                <DraftStatusProvider>
-                  <TeamsProvider>
-                    <PlayersProvider>
-                      <PicksProvider>
-                        <MyTeamProvider>
-                          <SocketListener>
-                            {children}
-                          </SocketListener>
-                        </MyTeamProvider>
-                      </PicksProvider>
-                    </PlayersProvider>
-                  </TeamsProvider>
-                </DraftStatusProvider>
-              </DraftProvider>
-            </CurrentPickProvider>
+            <CommishModalProvider>
+              <CurrentPickProvider>
+                <DraftProvider>
+                  <DraftStatusProvider>
+                    <TeamsProvider>
+                      <PlayersProvider>
+                        <PicksProvider>
+                          <MyTeamProvider>
+                            <SocketListener>
+                              {children}
+                            </SocketListener>
+                          </MyTeamProvider>
+                        </PicksProvider>
+                      </PlayersProvider>
+                    </TeamsProvider>
+                  </DraftStatusProvider>
+                </DraftProvider>
+              </CurrentPickProvider>
+            </CommishModalProvider>
           </AlertContextProvider>
         </UserProvider>
       </body>

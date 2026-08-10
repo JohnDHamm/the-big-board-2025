@@ -1,5 +1,7 @@
 import { AlertContext } from './AlertContext/AlertContext';
 import AlertContextProvider from './AlertContext/AlertContextProvider';
+import { CommishModalContext } from './CommishModalContext/CommishModalContext';
+import CommishModalProvider from './CommishModalContext/CommishModalProvider';
 import { CurrentPickContext } from './CurrentPickContext/CurrentPickContext';
 import CurrentPickProvider from './CurrentPickContext/CurrentPickProvider';
 import { DraftContext } from './DraftContext/DraftContext';
@@ -20,6 +22,8 @@ import UserProvider from './UserContext/UserProvider';
 export {
   AlertContext,
   AlertContextProvider,
+  CommishModalContext,
+  CommishModalProvider,
   CurrentPickContext,
   CurrentPickProvider,
   DraftContext,

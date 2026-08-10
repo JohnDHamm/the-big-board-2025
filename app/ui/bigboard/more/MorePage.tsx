@@ -2,7 +2,7 @@
 
 import React from "react";
 import ThreeUpLayout from "../ThreeUpLayout";
-import TestAlert from "./TestAlert";
+import CommishCommands from "./CommishCommands";
 
 const MorePage: React.FC = () => {
   return (
@@ -10,10 +10,7 @@ const MorePage: React.FC = () => {
       <ThreeUpLayout
       left={<></>}
       center={
-        <div>
-          <h1>more (commish only)</h1>
-          <TestAlert />
-        </div>
+        <CommishCommands />
       }
       right={<></>}
       />
