@@ -11,13 +11,6 @@ import { socket } from "@/app/sockets/socket";
 const CommishCommands: React.FC = () => {
   const { user }= useContext(UserContext);
 
-  const markNotStarted = () => {
-    console.log('markNotStarted' );
-    //TODO: 
-    // // post new draft staus to League, then OK res =>
-    socket.emit("ChangeDraftStatus", "not started", user?.leagueId);
-  }
-
   const startDraft = () => {
     console.log('startDraft');
     //TODO: 
@@ -51,11 +44,6 @@ const CommishCommands: React.FC = () => {
       <TitleBlock>
         <CommishTitle>Commissioner Control</CommishTitle>
       </TitleBlock>
-      <ContentItem>
-        <Button onClick={() => markNotStarted()}>
-          <p>mark draft as not started</p>
-        </Button>
-      </ContentItem>
       <ContentItem>
         <Button onClick={() => startDraft()}>
           <p>open the draft</p>
