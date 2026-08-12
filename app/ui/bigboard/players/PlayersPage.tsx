@@ -14,7 +14,7 @@ import HidePlayersToggle from './HidePlayersToggle';
 import { PICKCONFIRM_MODAL_INITIAL_VALUE } from '@/app/contexts/PickConfirmModalContext/PickConfirmModalContext';
 
 import getPicks from '@/app/api/Picks/[leagueId]/getPicks';
-// import makePick
+import makePick from '@/app/api/Picks/makePick';
 // import updateDraftStatus from ''
 
 import {
@@ -29,6 +29,7 @@ import {
 } from '@/app/contexts';
 import HighestAvailablePlayers from './HighestAvailablePlayers';
 import MyDraftNeeds from './MyDraftNeeds';
+import { calcTotalRounds } from '@/app/utils';
 
 type Sorting = 'RANK' | 'A-Z' | 'TEAM';
 const sortTypes: Sorting[] = ['RANK', 'A-Z', 'TEAM'];
@@ -87,20 +88,19 @@ const PlayersPage: React.FC = () => {
         ownerId: user._id,
         playerId,
       };
-      console.log('confirmed newPick', newPick);
-      // makePick(newPick)
-      //   .then((res) => {
-      //     // console.log('saved pick', res);
-      //     setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE);
+      makePick(newPick)
+        .then((res) => {
+          setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE);
 
-      //     const numOwners = draft.league.draftOrder.length;
-      //     const numRounds = calcTotalRounds(draft.league.positionSlots);
-      //     const totalPicks = numRounds * numOwners;
-      //     if (res.selectionNumber + 1 > totalPicks) {
-      //       updateDraftStatus(draft.league._id, 'done');
-      //     }
-      //   })
-      //   .catch((err) => console.log('err', err));
+          const numOwners = draft.league.draftOrder.length;
+          const numRounds = calcTotalRounds(draft.league.positionSlots);
+          const totalPicks = numRounds * numOwners;
+          if (res.selectionNumber + 1 > totalPicks) {
+            // updateDraftStatus(draft.league._id, 'done');
+          }
+          //send socket
+        })
+        .catch((err) => console.log('err', err));
     }
   };
 
@@ -110,7 +110,6 @@ const PlayersPage: React.FC = () => {
       // check if current selection # is correct
       getPicks(user.leagueId).then((picks) => {
         if (currentDraftPick.selectionNumber === picks.length + 1) {
-          console.log('current #', currentDraftPick.selectionNumber);
           const selPlayer = players[playerId];
           const playerName = `${selPlayer.firstName} ${selPlayer.lastName}`;
           const team = teams[selPlayer.teamId];
