@@ -3,6 +3,7 @@
 import { useCallback, useContext, useEffect } from "react";
 
 import { socket } from './socket';
+import { useRouter } from "next/navigation";
 import { AlertContext, CommishModalContext, DraftStatusContext, UserContext } from "../contexts";
 import { COMMISH_MODAL_INITIAL_VALUE } from "../contexts/CommishModalContext/CommishModalContext";
 import { DURATIONS } from "../styles";
@@ -17,6 +18,7 @@ const SocketListener = ({
   const { draftStatus, setCurrentDraftStatus } =
     useContext(DraftStatusContext);
   const { user } = useContext(UserContext);
+  const router = useRouter();
 
   const clearModals = useCallback(() => {
     // console.log('clearing modals');
@@ -91,11 +93,12 @@ const SocketListener = ({
       console.log('SL DraftReopened', message);
       const newModal: CommishModal = {
         visible: true,
-        status: 'The draft has been reopened!',
+        status: 'The draft has been reopened! Continue below to restart the app.',
         message,
         hasAction: true,
         actionPrompt: "Continue",
         onActionCall: () => {
+          router.push('/bigboard');
           clearModals();
         },
       };
@@ -112,7 +115,13 @@ const SocketListener = ({
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
     };
-  }, [clearModals, setCurrentCommishModal, setCurrentDraftStatus, user]);
+  }, [
+    clearModals,
+    router,
+    setCurrentCommishModal,
+    setCurrentDraftStatus,
+    user
+  ]);
 
   useEffect(() => {
     // console.log('draftStatus change', draftStatus);
