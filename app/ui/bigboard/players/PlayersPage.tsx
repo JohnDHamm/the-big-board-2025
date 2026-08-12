@@ -11,6 +11,7 @@ import { ContentPadding } from "@/app/ui/bigboard/players/PlayersPage.styles";
 import PositionToggle from "@/app/ui/bigboard/players/PositionToggle";
 import SortToggle from './SortToggle';
 import HidePlayersToggle from './HidePlayersToggle';
+import { PICKCONFIRM_MODAL_INITIAL_VALUE } from '@/app/contexts/PickConfirmModalContext/PickConfirmModalContext';
 
 import getPicks from '@/app/api/Picks/[leagueId]/getPicks';
 // import makePick
@@ -21,6 +22,7 @@ import {
   DraftContext,
   DraftStatusContext,
   MyTeamContext,
+  PickConfirmModalContext,
   PlayersContext,
   TeamsContext,
   UserContext
@@ -48,9 +50,9 @@ const PlayersPage: React.FC = () => {
   const { players } = React.useContext(PlayersContext);
   const { teams } = React.useContext(TeamsContext);
   const { myTeam } = React.useContext(MyTeamContext);
-  // const { setCurrentPickConfirmModal } = React.useContext(
-  //   PickConfirmModalContext
-  // );
+  const { setCurrentPickConfirmModal } = React.useContext(
+    PickConfirmModalContext
+  );
   
   const [playersRenderList, setPlayersRenderList] = React.useState<
     PlayerInfo[]
@@ -77,6 +79,31 @@ const PlayersPage: React.FC = () => {
   };
 
 
+  const handleConfirm = (playerId: string) => {
+    if (user) {
+      const newPick: DraftSelection = {
+        selectionNumber: currentDraftPick.selectionNumber,
+        leagueId: draft.league._id,
+        ownerId: user._id,
+        playerId,
+      };
+      console.log('confirmed newPick', newPick);
+      // makePick(newPick)
+      //   .then((res) => {
+      //     // console.log('saved pick', res);
+      //     setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE);
+
+      //     const numOwners = draft.league.draftOrder.length;
+      //     const numRounds = calcTotalRounds(draft.league.positionSlots);
+      //     const totalPicks = numRounds * numOwners;
+      //     if (res.selectionNumber + 1 > totalPicks) {
+      //       updateDraftStatus(draft.league._id, 'done');
+      //     }
+      //   })
+      //   .catch((err) => console.log('err', err));
+    }
+  };
+
   
   const handlePick = (playerId: string) => {
     if (user) {
@@ -87,20 +114,22 @@ const PlayersPage: React.FC = () => {
           const selPlayer = players[playerId];
           const playerName = `${selPlayer.firstName} ${selPlayer.lastName}`;
           const team = teams[selPlayer.teamId];
-          // setCurrentPickConfirmModal({
-          //   visible: true,
-          //   player: {
-          //     name: playerName,
-          //     position: selPlayer.position,
-          //   },
-          //   team: {
-          //     abbv: team.abbv,
-          //     colors: team.colors,
-          //   },
-          //   onCancel: () =>
-          //     setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE),
-          //   onConfirm: () => handleConfirm(playerId),
-          // });
+          setCurrentPickConfirmModal({
+            visible: true,
+            player: {
+              name: playerName,
+              position: selPlayer.position,
+            },
+            team: {
+              abbv: team.abbv,
+              colors: team.colors,
+            },
+            onCancel: () =>
+              setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE),
+            onConfirm: () => handleConfirm(playerId),
+          });
+        } else {
+          //TODO: if current selection # is not correct?
         }
       });
     }

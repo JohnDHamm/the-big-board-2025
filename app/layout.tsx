@@ -16,6 +16,7 @@ import {
   DraftProvider,
   DraftStatusProvider,
   MyTeamProvider,
+  PickConfirmModalProvider,
   PicksProvider,
   PlayersProvider,
   TeamsProvider,
@@ -50,9 +51,11 @@ export default function RootLayout({
                       <PlayersProvider>
                         <PicksProvider>
                           <MyTeamProvider>
-                            <SocketListener>
-                              {children}
-                            </SocketListener>
+                            <PickConfirmModalProvider>
+                              <SocketListener>
+                                {children}
+                              </SocketListener>
+                            </PickConfirmModalProvider>
                           </MyTeamProvider>
                         </PicksProvider>
                       </PlayersProvider>
