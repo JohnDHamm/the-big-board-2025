@@ -10,6 +10,8 @@ import { DraftStatusContext } from './DraftStatusContext/DraftStatusContext';
 import DraftStatusProvider from './DraftStatusContext/DraftStatusProvider';
 import { MyTeamContext } from './MyTeamContext/MyTeamContext';
 import MyTeamProvider from './MyTeamContext/MyTeamProvider';
+import { PickIsInModalContext } from './PickIsInModalContext/PickIsInModalContext';
+import PickIsInModalModalProvider from './PickIsInModalContext/PickIsInModalProvider';
 import { PickConfirmModalContext } from './PickConfirmModalContext/PickConfirmModalContext';
 import PickConfirmModalProvider from './PickConfirmModalContext/PickConfirmModalProvider'
 import { PicksContext } from './PicksContext/PicksContext';
@@ -34,6 +36,8 @@ export {
   DraftStatusProvider,
   MyTeamContext,
   MyTeamProvider,
+  PickIsInModalContext,
+  PickIsInModalModalProvider,
   PickConfirmModalContext,
   PickConfirmModalProvider,
   PicksContext,

@@ -30,6 +30,7 @@ import {
 import HighestAvailablePlayers from './HighestAvailablePlayers';
 import MyDraftNeeds from './MyDraftNeeds';
 import { calcTotalRounds } from '@/app/utils';
+import { socket } from '@/app/sockets/socket';
 
 type Sorting = 'RANK' | 'A-Z' | 'TEAM';
 const sortTypes: Sorting[] = ['RANK', 'A-Z', 'TEAM'];
@@ -98,7 +99,7 @@ const PlayersPage: React.FC = () => {
           if (res.selectionNumber + 1 > totalPicks) {
             // updateDraftStatus(draft.league._id, 'done');
           }
-          //send socket
+          socket.emit("MakePick", newPick, user.leagueId);
         })
         .catch((err) => console.log('err', err));
     }

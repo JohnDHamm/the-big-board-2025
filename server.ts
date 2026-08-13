@@ -56,6 +56,11 @@ app.prepare().then(() => {
       console.log('______________draft status changed', status);
       io.to(room).emit("DraftStatusChanged", status);
     })
+
+    socket.on("MakePick", (newPick, room) => {
+      console.log('______________make new pick', newPick);
+      io.to(room).emit("PickMade", newPick);
+    })
   });
 
   httpServer
