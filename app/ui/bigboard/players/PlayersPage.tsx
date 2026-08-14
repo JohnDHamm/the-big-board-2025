@@ -15,7 +15,7 @@ import { PICKCONFIRM_MODAL_INITIAL_VALUE } from '@/app/contexts/PickConfirmModal
 
 import getPicks from '@/app/api/Picks/[leagueId]/getPicks';
 import makePick from '@/app/api/Picks/makePick';
-// import updateDraftStatus from ''
+import updateDraftStatus from '@/app/api/Leagues/[id]/updateDraftStatus';
 
 import {
   CurrentPickContext,
@@ -70,7 +70,6 @@ const PlayersPage: React.FC = () => {
   const [hideSelected, setHideSelected] = React.useState<boolean>(false);
   const [myNeeds, setMyNeeds] = React.useState<PositionNeeds>();
 
-
   const hasOpenPositionSlot = (position: NFL_Position): boolean => {
     const numSlots =
       find(draft.league.positionSlots, { position: position })?.total || 0;
@@ -79,7 +78,6 @@ const PlayersPage: React.FC = () => {
     ).length;
     return myPicks < numSlots;
   };
-
 
   const handleConfirm = (playerId: string) => {
     if (user) {
@@ -97,14 +95,17 @@ const PlayersPage: React.FC = () => {
           const numRounds = calcTotalRounds(draft.league.positionSlots);
           const totalPicks = numRounds * numOwners;
           if (res.selectionNumber + 1 > totalPicks) {
-            // updateDraftStatus(draft.league._id, 'done');
+            updateDraftStatus(draft.league._id, 'done')
+              .then(() => {
+                socket.emit("ChangeDraftStatus", 'done', user.leagueId);
+              })
+              .catch((err) => console.log('err', err));
           }
           socket.emit("MakePick", newPick, user.leagueId);
         })
         .catch((err) => console.log('err', err));
     }
   };
-
   
   const handlePick = (playerId: string) => {
     if (user) {

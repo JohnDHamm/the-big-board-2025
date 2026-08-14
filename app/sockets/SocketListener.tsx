@@ -165,11 +165,24 @@ const SocketListener = ({
 
     function onConnect() {
       console.log("SL socket onConnect")
-      console.log("SL recovered?", socket.recovered);
+      if (socket.recovered) {
+        console.log("SL recovered?", socket.recovered);
+        setCurrentAlert({
+          message: 'The connection has been recovered!',
+          type: 'success',
+          sticky: true,
+        });
+        setTimeout(() => setCurrentAlert(null), DURATIONS.POPUP_ALERT + 250);
+      }
     }
 
     function onDisconnect() {
       console.log("socket onDisconnect")
+      setCurrentAlert({
+          message: 'Connection lost! Trying to reconnect...',
+          type: 'err',
+          sticky: true,
+        });
     }
 
     socket.on("connect", onConnect);
@@ -243,7 +256,8 @@ const SocketListener = ({
     router,
     setCurrentCommishModal,
     setCurrentDraftStatus,
-    user
+    user,
+    setCurrentAlert
   ]);
 
   useEffect(() => {

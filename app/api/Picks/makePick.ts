@@ -8,7 +8,7 @@ const makePick = async (pickData: DraftSelection) => {
       body: JSON.stringify(pickData),
     });
     const data = await response.json();
-    return data;
+    return data.received;
   } catch (error) {
     console.log('Failed to save pick', error);
   }
