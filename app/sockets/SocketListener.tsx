@@ -1,12 +1,28 @@
 'use client';
 
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { socket } from './socket';
 import { useRouter } from "next/navigation";
-import { AlertContext, CommishModalContext, DraftStatusContext, UserContext } from "../contexts";
+import {
+  AlertContext,
+  CommishModalContext,
+  CurrentPickContext,
+  DraftContext,
+  DraftStatusContext,
+  MyTeamContext,
+  PickConfirmModalContext,
+  PickIsInModalContext,
+  PicksContext,
+  PlayersContext,
+  TeamsContext,
+  UserContext
+ } from "../contexts";
 import { COMMISH_MODAL_INITIAL_VALUE } from "../contexts/CommishModalContext/CommishModalContext";
+import { PICKISIN_MODAL_INITIAL_VALUE } from "../contexts/PickIsInModalContext/PickIsInModalContext";
+import { PICKCONFIRM_MODAL_INITIAL_VALUE } from "../contexts/PickConfirmModalContext/PickConfirmModalContext";
 import { DURATIONS } from "../styles";
+import { calcTotalRounds } from "../utils";
 
 const SocketListener = ({
   children,
@@ -15,23 +31,131 @@ const SocketListener = ({
 }) => {
   const { alert, setCurrentAlert } = useContext(AlertContext);
   const { setCurrentCommishModal } = useContext(CommishModalContext);
+  const { setCurrentDraftPick } = useContext(CurrentPickContext);
+  const { draft } = useContext(DraftContext);
   const { draftStatus, setCurrentDraftStatus } =
     useContext(DraftStatusContext);
-  const { user } = useContext(UserContext);
+    const { myTeam, setCurrentMyTeam } = useContext(MyTeamContext);
+    const { setCurrentPickIsInModal } = useContext(PickIsInModalContext);
+    const { picks, setCurrentPicks } = useContext(PicksContext);
+    const { setCurrentPickConfirmModal } = useContext(
+      PickConfirmModalContext
+    );
+    const { players, setCurrentPlayers } = useContext(PlayersContext);
+    const { teams } = useContext(TeamsContext);
+    const { user } = useContext(UserContext);
+
   const router = useRouter();
 
+  const [newPick, setNewPick] = useState<DraftSelection>();
+
   const clearModals = useCallback(() => {
-    // console.log('clearing modals');
     setCurrentAlert(null);
     setCurrentCommishModal(COMMISH_MODAL_INITIAL_VALUE);
-    // setCurrentPickIsInModal(PICKISIN_MODAL_INITIAL_VALUE);
-    // setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE);
-    // setNewPick(undefined);
+    setCurrentPickIsInModal(PICKISIN_MODAL_INITIAL_VALUE);
+    setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE);
+    setNewPick(undefined);
   }, [
     setCurrentAlert,
     setCurrentCommishModal,
-    // setCurrentPickConfirmModal,
-    // setCurrentPickIsInModal,
+    setCurrentPickConfirmModal,
+    setCurrentPickIsInModal,
+  ]);
+
+  const updatePlayer = useCallback(
+    (playerId: string, players: Players) => {
+      players[playerId].available = false;
+      setCurrentPlayers(players);
+    },
+    [setCurrentPlayers]
+  );
+
+  const updatePicks = useCallback(
+    (newPick: DraftSelection, picks: DraftPickContext) => {
+      picks[newPick.selectionNumber] = newPick;
+      setCurrentPicks(picks);
+
+      const numOwners = draft.league.draftOrder.length;
+      const numRounds = calcTotalRounds(draft.league.positionSlots);
+      const totalPicks = numRounds * numOwners;
+      if (newPick.selectionNumber + 1 > totalPicks) {
+      } else {
+        const updateCurrent: CurrentDraftPick = {
+          selectionNumber: newPick.selectionNumber + 1,
+          ownerId: picks[newPick.selectionNumber + 1].ownerId,
+        };
+        setCurrentDraftPick(updateCurrent);
+      }
+    },
+    [setCurrentPicks, setCurrentDraftPick, draft]
+  );
+
+  const getOwnerName = useCallback(
+    (ownerId: string) => {
+      const owner = draft.owners.find((owner) => owner._id === ownerId);
+      return owner ? owner.name : '';
+    },
+    [draft]
+  );
+
+  useEffect(() => {
+    if (
+      newPick &&
+      user &&
+      players &&
+      teams &&
+      setCurrentPickIsInModal &&
+      updatePlayer &&
+      updatePicks
+    ) {
+      if (user?._id !== newPick.ownerId) {
+        const player = players[newPick.playerId];
+        const team = teams[player.teamId];
+        const newModal: PickIsInModal = {
+          visible: true,
+          selectionNumber: newPick.selectionNumber,
+          ownerName: getOwnerName(newPick.ownerId),
+          player: {
+            position: player.position,
+            firstName: player.firstName,
+            lastName: player.lastName,
+          },
+          team: {
+            abbv: team.abbv,
+            colors: team.colors,
+          },
+        };
+        setCurrentPickIsInModal(newModal);
+      } else {
+        const updateTeam: MyTeam = JSON.parse(JSON.stringify(myTeam));
+        const newSelection: DraftPick = {
+          selectionNumber: newPick.selectionNumber,
+          playerId: newPick.playerId,
+          ownerId: newPick.ownerId,
+        };
+        updateTeam.push(newSelection);
+        setCurrentMyTeam(updateTeam);
+        const totalPicks = Object.keys(picks).length;
+        if (newPick.selectionNumber !== totalPicks) {
+          setCurrentAlert({
+            message: 'Congrats! Your pick is complete.',
+            type: 'success',
+          });
+          setTimeout(() => setCurrentAlert(null), DURATIONS.POPUP_ALERT + 250);
+        }
+      }
+      updatePicks(newPick, JSON.parse(JSON.stringify(picks)));
+      updatePlayer(newPick.playerId, JSON.parse(JSON.stringify(players)));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    getOwnerName,
+    newPick,
+    setCurrentPickIsInModal,
+    teams,
+    updatePicks,
+    updatePlayer,
+    user
   ]);
 
   useEffect(() => {
@@ -41,11 +165,24 @@ const SocketListener = ({
 
     function onConnect() {
       console.log("SL socket onConnect")
-      console.log("SL recovered?", socket.recovered);
+      if (socket.recovered) {
+        console.log("SL recovered?", socket.recovered);
+        setCurrentAlert({
+          message: 'The connection has been recovered!',
+          type: 'success',
+          sticky: true,
+        });
+        setTimeout(() => setCurrentAlert(null), DURATIONS.POPUP_ALERT + 250);
+      }
     }
 
     function onDisconnect() {
       console.log("socket onDisconnect")
+      setCurrentAlert({
+          message: 'Connection lost! Trying to reconnect...',
+          type: 'err',
+          sticky: true,
+        });
     }
 
     socket.on("connect", onConnect);
@@ -55,7 +192,6 @@ const SocketListener = ({
       console.log('SL JoinRoomWelcome', msg)
     );
 
-    // testing socket to other users
     socket.on("OwnerHello", (msg: string) =>
       console.log('SL OwnerHello', msg)
     );
@@ -120,11 +256,17 @@ const SocketListener = ({
     router,
     setCurrentCommishModal,
     setCurrentDraftStatus,
-    user
+    user,
+    setCurrentAlert
   ]);
 
   useEffect(() => {
-    // console.log('draftStatus change', draftStatus);
+    socket.on('PickMade', (pick: DraftSelection) => {
+      setNewPick(pick);
+    });
+  }, []);
+
+  useEffect(() => {
     setCurrentAlert(null);
     switch (draftStatus) {
       case 'open':

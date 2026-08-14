@@ -11,22 +11,26 @@ import { ContentPadding } from "@/app/ui/bigboard/players/PlayersPage.styles";
 import PositionToggle from "@/app/ui/bigboard/players/PositionToggle";
 import SortToggle from './SortToggle';
 import HidePlayersToggle from './HidePlayersToggle';
+import { PICKCONFIRM_MODAL_INITIAL_VALUE } from '@/app/contexts/PickConfirmModalContext/PickConfirmModalContext';
 
 import getPicks from '@/app/api/Picks/[leagueId]/getPicks';
-// import makePick
-// import updateDraftStatus from ''
+import makePick from '@/app/api/Picks/makePick';
+import updateDraftStatus from '@/app/api/Leagues/[id]/updateDraftStatus';
 
 import {
   CurrentPickContext,
   DraftContext,
   DraftStatusContext,
   MyTeamContext,
+  PickConfirmModalContext,
   PlayersContext,
   TeamsContext,
   UserContext
 } from '@/app/contexts';
 import HighestAvailablePlayers from './HighestAvailablePlayers';
 import MyDraftNeeds from './MyDraftNeeds';
+import { calcTotalRounds } from '@/app/utils';
+import { socket } from '@/app/sockets/socket';
 
 type Sorting = 'RANK' | 'A-Z' | 'TEAM';
 const sortTypes: Sorting[] = ['RANK', 'A-Z', 'TEAM'];
@@ -48,9 +52,9 @@ const PlayersPage: React.FC = () => {
   const { players } = React.useContext(PlayersContext);
   const { teams } = React.useContext(TeamsContext);
   const { myTeam } = React.useContext(MyTeamContext);
-  // const { setCurrentPickConfirmModal } = React.useContext(
-  //   PickConfirmModalContext
-  // );
+  const { setCurrentPickConfirmModal } = React.useContext(
+    PickConfirmModalContext
+  );
   
   const [playersRenderList, setPlayersRenderList] = React.useState<
     PlayerInfo[]
@@ -66,7 +70,6 @@ const PlayersPage: React.FC = () => {
   const [hideSelected, setHideSelected] = React.useState<boolean>(false);
   const [myNeeds, setMyNeeds] = React.useState<PositionNeeds>();
 
-
   const hasOpenPositionSlot = (position: NFL_Position): boolean => {
     const numSlots =
       find(draft.league.positionSlots, { position: position })?.total || 0;
@@ -76,31 +79,58 @@ const PlayersPage: React.FC = () => {
     return myPicks < numSlots;
   };
 
+  const handleConfirm = (playerId: string) => {
+    if (user) {
+      const newPick: DraftSelection = {
+        selectionNumber: currentDraftPick.selectionNumber,
+        leagueId: draft.league._id,
+        ownerId: user._id,
+        playerId,
+      };
+      makePick(newPick)
+        .then((res) => {
+          setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE);
 
+          const numOwners = draft.league.draftOrder.length;
+          const numRounds = calcTotalRounds(draft.league.positionSlots);
+          const totalPicks = numRounds * numOwners;
+          if (res.selectionNumber + 1 > totalPicks) {
+            updateDraftStatus(draft.league._id, 'done')
+              .then(() => {
+                socket.emit("ChangeDraftStatus", 'done', user.leagueId);
+              })
+              .catch((err) => console.log('err', err));
+          }
+          socket.emit("MakePick", newPick, user.leagueId);
+        })
+        .catch((err) => console.log('err', err));
+    }
+  };
   
   const handlePick = (playerId: string) => {
     if (user) {
       // check if current selection # is correct
       getPicks(user.leagueId).then((picks) => {
         if (currentDraftPick.selectionNumber === picks.length + 1) {
-          console.log('current #', currentDraftPick.selectionNumber);
           const selPlayer = players[playerId];
           const playerName = `${selPlayer.firstName} ${selPlayer.lastName}`;
           const team = teams[selPlayer.teamId];
-          // setCurrentPickConfirmModal({
-          //   visible: true,
-          //   player: {
-          //     name: playerName,
-          //     position: selPlayer.position,
-          //   },
-          //   team: {
-          //     abbv: team.abbv,
-          //     colors: team.colors,
-          //   },
-          //   onCancel: () =>
-          //     setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE),
-          //   onConfirm: () => handleConfirm(playerId),
-          // });
+          setCurrentPickConfirmModal({
+            visible: true,
+            player: {
+              name: playerName,
+              position: selPlayer.position,
+            },
+            team: {
+              abbv: team.abbv,
+              colors: team.colors,
+            },
+            onCancel: () =>
+              setCurrentPickConfirmModal(PICKCONFIRM_MODAL_INITIAL_VALUE),
+            onConfirm: () => handleConfirm(playerId),
+          });
+        } else {
+          //TODO: if current selection # is not correct?
         }
       });
     }

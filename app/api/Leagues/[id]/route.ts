@@ -10,3 +10,15 @@ export async function GET( req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ message: "Error", error }, { status: 500 });
   }
 }
+
+export async function PATCH( req: NextRequest, { params }: { params: { id: string }}) {
+  try {
+    const { id } = await params;
+    const body = await req.json();
+
+    await League.findByIdAndUpdate(id, body);
+    return NextResponse.json({ message: "Item updated", received: body }, { status: 200 })
+  } catch (error) {
+    return NextResponse.json({ message: "Error", error }, { status: 500 });
+  }
+};

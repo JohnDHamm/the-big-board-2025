@@ -10,15 +10,21 @@ import {
   CommishModalContext,
   CurrentPickContext,
   DraftContext,
+  PickConfirmModalContext,
+  PickIsInModalContext,
   UserContext
 } from "@/app/contexts";
 import { usePathname } from "next/navigation";
 import CommishModal from "../ui/bigboard/CommishModal";
+import PickConfirmModal from "../ui/bigboard/players/PickConfirmModal";
+import PickIsInModal from "../ui/bigboard/PickIsInModal";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { alert } = useContext(AlertContext);
   const { commishModal } = useContext(CommishModalContext);
   const { draft } = useContext(DraftContext);
+  const { modal } = useContext(PickConfirmModalContext);
+  const { pickIsInModal } = useContext(PickIsInModalContext);
   const { currentDraftPick } = useContext(CurrentPickContext);
   const { user } = useContext(UserContext);
   const pathname = usePathname();
@@ -42,6 +48,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         />
       )}
       <CommishModal {...commishModal} />
+      <PickConfirmModal {...modal}/>
+      <PickIsInModal {...pickIsInModal} />
       <Navbar disabled={pathname ==='/bigboard'}/>
       <div>{children}</div>
       <BottomTicker 

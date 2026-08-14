@@ -5,6 +5,7 @@ await dbConnect();
 
 export interface Pick extends mongoose.Document {
   selectionNumber: number;
+  leagueId: string;
   ownerId: string;
   playerId: string;
 }
@@ -12,6 +13,10 @@ export interface Pick extends mongoose.Document {
 const PickSchema = new mongoose.Schema<Pick>({
   selectionNumber: {
     type: Number,
+    required: true,
+  },
+  leagueId: {
+    type: String,
     required: true,
   },
   ownerId: {
