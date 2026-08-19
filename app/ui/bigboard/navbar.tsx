@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { usePathname } from 'next/navigation';
 import { UserButton } from "@clerk/nextjs";
 
-import { UserContext } from "@/app/contexts";
+import { UserContext, DraftStatusContext } from "@/app/contexts";
 import Logo from "@/app/ui/bigboard/Logo";
 
 import {
@@ -24,13 +24,17 @@ interface Props {
 
 const Navbar: React.FC<Props> = ({ disabled = false }) => {
   const { user } = useContext(UserContext);
+  const { draftStatus } = useContext(DraftStatusContext);
   const pathname = usePathname();
 
   const links = [
-    { name: 'SELECTIONS', href: '/bigboard/selections', mobileAbbv: 'S'},
     { name: 'PLAYERS', href: '/bigboard/players', mobileAbbv: 'P'},
     { name: 'MY TEAM', href: '/bigboard/my-team', mobileAbbv: 'T'},
   ]
+
+  if (draftStatus !== 'not started') {
+    links.unshift({ name: 'SELECTIONS', href: '/bigboard/selections', mobileAbbv: 'S'},)
+  }
   
   if (user?.isCommish) {
     links.push(

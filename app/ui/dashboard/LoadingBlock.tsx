@@ -34,7 +34,7 @@ const LoadingBlock = () => {
   //contexts
   const { setCurrentDraftPick } = useContext(CurrentPickContext);
   const { setCurrentDraft } = useContext(DraftContext);
-  const { setCurrentDraftStatus } = useContext(DraftStatusContext);
+  const { draftStatus, setCurrentDraftStatus } = useContext(DraftStatusContext);
   const { setCurrentMyTeam } = useContext(MyTeamContext);
   const { setCurrentPicks } = useContext(PicksContext);
   const { setCurrentPlayers } = useContext(PlayersContext);
@@ -274,9 +274,13 @@ const LoadingBlock = () => {
 
   useEffect(() => {
     if (teamsAreReady && playersAreReady && picksAreReady && myTeamIsReady) {
-      setTimeout(() => router.push('/bigboard/selections'), 500);
+      if (draftStatus !== 'not started') {
+        setTimeout(() => router.push('/bigboard/selections'), 500);
+      } else {
+        setTimeout(() => router.push('/bigboard/players'), 500);
+      }
     }
-  }, [myTeamIsReady, playersAreReady, teamsAreReady, picksAreReady, router]);
+  }, [myTeamIsReady, playersAreReady, teamsAreReady, picksAreReady, router, draftStatus]);
 
   return (
     <Container>

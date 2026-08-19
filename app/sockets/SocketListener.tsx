@@ -205,6 +205,7 @@ const SocketListener = ({
         hasAction: true,
         actionPrompt: "Let's GO!",
         onActionCall: () => {
+          router.push('/bigboard');
           clearModals();
         },
       };
