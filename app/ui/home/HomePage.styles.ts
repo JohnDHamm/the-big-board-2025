@@ -53,3 +53,12 @@ export const ContentItem = styled.div`
 export const ButtonContainer = styled.div`
   margin: 4rem 1rem;
 `
+
+export const ErrorMsg = styled.p`
+  margin: 0;
+  padding-top: 1rem;
+  font-family: ${FONTS.NAMES};
+  font-size: 1.5rem;
+  color: ${COLORS.ERR};
+  text-align: center;
+`;

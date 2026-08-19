@@ -10,6 +10,7 @@ import {
   ButtonContainer,
   Content,
   ContentItem,
+  ErrorMsg,
   IntroText,
   LogoContainer,
   Page,
@@ -36,6 +37,7 @@ const HomePage: React.FC = () => {
   const [userLeagues, setUserLeagues] = useState<LeagueListItem[]>([]);
   const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
   const [ownerId, setOwnerId] = useState<string>('');
+  const [errorMsg, setErrorMsg] = React.useState<string>('');
   
   const initLeagues = async () => {
     const AllLeaguesList: LeagueListItem[] = await getLeaguesList();
@@ -51,10 +53,14 @@ const HomePage: React.FC = () => {
   const getIdFromUserId = useCallback(async () => {
     if (userId) {
       const res: OwnerIdResponse = await getOwnerId(userId);
-      setOwnerId(res._id);
+      if (res && res._id) {
+        setOwnerId(res._id);
+      } else {
+        setErrorMsg("Your account is being reviewed and processed. Please take the time to edit your username or avatar by clicking the icon above. Your league commissioner will let you know when you are approved and can sign into the draft.")
+      }
     }
-  }, [userId]
-)
+  }, [userId]);
+
   const getSelectOptions = (): string[] => {
     const options: string[] = [];
       userLeagues.forEach((league: LeagueListItem) => {
@@ -146,15 +152,19 @@ const HomePage: React.FC = () => {
             <IntroText>Welcome back, </IntroText>
             <Title>{user?.username}</Title>
             <UserButton />
-          <ContentItem>
-            <IntroText>Please select your league below:</IntroText>
-            <ContentItem>{renderSelect()}</ContentItem>
-            {ownerId && selectedLeagueId && (
-              <ButtonContainer>
-                <Button alternate onClick={() => confirmLeague()}>{`Let's Go!`}</Button>
-              </ButtonContainer>
+            {!isEmpty(errorMsg) ? (
+              <ErrorMsg>{errorMsg}</ErrorMsg>
+            ) : (
+              <ContentItem>
+                <IntroText>Please select your league below:</IntroText>
+                <ContentItem>{renderSelect()}</ContentItem>
+                {ownerId && selectedLeagueId && (
+                  <ButtonContainer>
+                    <Button alternate onClick={() => confirmLeague()}>{`Let's Go!`}</Button>
+                  </ButtonContainer>
+                )}
+              </ContentItem>
             )}
-            </ContentItem>
           </ContentItem>
         </Show>
       </Content>
