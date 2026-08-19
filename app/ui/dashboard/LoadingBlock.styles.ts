@@ -19,5 +19,5 @@ export const LoadBlock = styled.div`
 
 export const LoadedText = styled(Text)<{ $loaded?: boolean }>`
   color: ${(props) =>
-    props.$loaded ? COLORS.PRIMARY_GREEN : COLORS.DISABLED_GRAY};
+    props.$loaded ? COLORS.WHITE : COLORS.DISABLED_GRAY};
 `;

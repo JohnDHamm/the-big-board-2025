@@ -17,6 +17,7 @@ declare global {
 export const DRAFT_INITIAL_VALUE: Draft = {
   league: {
     _id: '',
+    orgId: '',
     name: '',
     draftOrder: [],
     positionSlots: [],

@@ -44,6 +44,7 @@ const LoadingBlock = () => {
   //state
   const [league, setLeague] = useState<League>({
     _id: '',
+    orgId: '',
     name: '',
     draftOrder: [],
     draftStatus: 'not started',
@@ -279,8 +280,7 @@ const LoadingBlock = () => {
 
   return (
     <Container>
-      <Text>preparing draft data for</Text>
-      <LoadedText $loaded={true}>{league.name}</LoadedText>
+      <Text>preparing your draft data...</Text>
       <LoadBlock>
         <LoadedText $loaded={teamsAreReady}>NFL TEAMS</LoadedText>
         <LoadedText $loaded={playersAreReady}>NFL PLAYERS</LoadedText>

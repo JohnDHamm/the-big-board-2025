@@ -4,6 +4,7 @@ import dbConnect from "../lib/dbConnect";
 await dbConnect();
 
 export interface League extends mongoose.Document {
+  orgId: string;
   name: string;
   positionSlots: Position_Slot[];
   draftStatus: DraftStatus;
@@ -12,6 +13,10 @@ export interface League extends mongoose.Document {
 }
 
 const LeagueSchema = new mongoose.Schema<League>({
+  orgId: {
+    type: String,
+    required: true,
+  },
   name: {
     type: String,
     required: true,

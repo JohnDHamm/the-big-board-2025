@@ -7,12 +7,13 @@ export const Page = styled.div`
   flex: 1;
   flex-direction: column;
   align-items: center;
+  padding-top: 2rem;
+  background-color: ${COLORS.PRIMARY_GREEN};
 `;
 
 export const TopBlock = styled.div`
   display: flex;
   flex: 0.15;
-  justify-content: center;
   align-items: center;
 `;
 
@@ -24,47 +25,31 @@ export const LogoContainer = styled.div`
 `;
 
 export const Content = styled.div`
-  width: 400px;
+  width: 480px;
   flex: 0.85;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   @media screen and (${SCREEN_WIDTHS.MOBILE}) {
     width: 90%;
   }
 `;
 
-export const SignIn = styled.p`
-  margin: 0;
+export const Title = styled.p`
+  /* padding: 2rem 0 1.5rem 0; */
   font-family: ${FONTS.BLOCKLETTER};
   font-size: 2.5rem;
-  color: ${COLORS.SECONDARY_GRAY};
-  text-align: center;
+  color: ${COLORS.WHITE};
 `;
 
-export const LoadingMsg = styled.p`
-  margin: 0;
-  font-family: ${FONTS.BLOCKLETTER};
-  font-size: 2rem;
-  color: ${COLORS.DISABLED_GRAY};
-  text-align: center;
-`;
+export const IntroText = styled.p`
+  font-family: ${FONTS.NAMES};
+  font-size: 1.25rem;
+  color: ${COLORS.BLACK};
+`
 
 export const ContentItem = styled.div`
-  margin-bottom: 1rem;
+  text-align: center;
+  margin: 1.5rem 0;
 `;
 
-export const BtnBlock = styled.div`
-  margin-top: 2rem;
-  width: 100%;
-  text-align: center;
-`;
-
-export const ErrorMsg = styled.p`
-  margin: 0;
-  padding-top: 1rem;
-  font-family: ${FONTS.NAMES};
-  font-size: 1.5rem;
-  color: ${COLORS.ERR};
-  text-align: center;
-`;
+export const ButtonContainer = styled.div`
+  margin: 4rem 1rem;
+`

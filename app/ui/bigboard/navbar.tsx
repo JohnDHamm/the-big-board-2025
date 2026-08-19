@@ -2,6 +2,7 @@
 
 import { useContext } from "react";
 import { usePathname } from 'next/navigation';
+import { UserButton } from "@clerk/nextjs";
 
 import { UserContext } from "@/app/contexts";
 import Logo from "@/app/ui/bigboard/Logo";
@@ -10,6 +11,7 @@ import {
   Container,
   LogoContainer,
   MobileTabIcon,
+  Profile,
   Tab,
   TabBlock,
   TabsContainer,
@@ -60,6 +62,9 @@ const Navbar: React.FC<Props> = ({ disabled = false }) => {
                 </TabLink>
               );
             })}
+            <Profile>
+              <UserButton />
+            </Profile>
           </TabsContainer>
         </Container>
       )}

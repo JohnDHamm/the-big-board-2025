@@ -13,7 +13,7 @@ export const StyledButton = styled.button<{ $width?: string; $alternate: boolean
   border-width: 1px;
   border-style: solid;
   width: ${(props) => (props.$width ? props.$width : 'auto')};
-  color: ${(props) => (props.$alternate ? COLORS.DISABLED_GRAY : COLORS.WHITE)};
+  color: ${(props) => (props.$alternate ? COLORS.BLACK : COLORS.WHITE)};
   font-family: ${FONTS.BLOCKLETTER};
   font-size: 1.5rem;
 
