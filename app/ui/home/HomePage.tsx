@@ -1,75 +1,77 @@
 'use client';
 
-import React, { JSX } from 'react';
+import React, { JSX, useCallback, useContext, useEffect, useState } from 'react';
+import { socket } from "@/app/sockets/socket";
+import isEmpty from 'lodash.isempty';
+import { useRouter } from 'next/navigation';
+import { Show, SignInButton, UserButton, useUser, useAuth } from '@clerk/nextjs'
+
 import {
-  BtnBlock,
+  ButtonContainer,
   Content,
   ContentItem,
   ErrorMsg,
-  LoadingMsg,
+  IntroText,
   LogoContainer,
   Page,
-  SignIn,
+  Title,
   TopBlock,
 } from './HomePage.styles';
 
 import Logo from '../bigboard/Logo';
 import Select from './Select';
-import Input from './Input';
 import Button from './Button';
 
 import { UserContext } from '../../contexts';
 import getLeaguesList from '@/app/api/Leagues/getLeaguesList';
-import { socket } from "@/app/sockets/socket";
-import isEmpty from 'lodash.isempty';
-import { LOCAL_STORAGE, TEST_LEAGUE_IDS } from '@/app/utils/constants';
-import { useRouter } from 'next/navigation';
+import getOwnerId from '@/app/api/Owners/userId/[userId]/getOwnerId';
 
 const HomePage: React.FC = () => {
-  const { user, setCurrentUser } = React.useContext(UserContext);
-  // const history = useHistory();
+  const { setCurrentUser } = useContext(UserContext);
   const router = useRouter();
+  const { user } = useUser();
+  const { userId, orgId, orgRole } = useAuth();
 
-  const [leagues, setLeagues] = React.useState<LeagueListItem[]>([]);
-  const [selectedLeagueId, setSelectedLeagueId] = React.useState<string>('');
-  const [showNameInput, setShowNameInput] = React.useState<boolean>(false);
-  const [showPasswordInput, setShowPasswordInput] =
-    React.useState<boolean>(false);
-  const [showLoginBtn, setShowLoginBtn] = React.useState<boolean>(false);
-  const [name, setName] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
+
+  const [allLeagues, setAllLeagues] = useState<LeagueListItem[]>([]);
+  const [userLeagues, setUserLeagues] = useState<LeagueListItem[]>([]);
+  const [selectedLeagueId, setSelectedLeagueId] = useState<string>('');
+  const [ownerId, setOwnerId] = useState<string>('');
   const [errorMsg, setErrorMsg] = React.useState<string>('');
-
-  const devTesting = process.env.NODE_ENV === "development";
   
   const initLeagues = async () => {
-    const leaguesList = await getLeaguesList();
-    if (leaguesList) {
-      setLeagues(leaguesList);
+    const AllLeaguesList: LeagueListItem[] = await getLeaguesList();
+    if (AllLeaguesList) {
+      setAllLeagues(AllLeaguesList);
     }
   };
 
+  interface OwnerIdResponse {
+    _id: string;
+  }
+
+  const getIdFromUserId = useCallback(async () => {
+    if (userId) {
+      const res: OwnerIdResponse = await getOwnerId(userId);
+      if (res && res._id) {
+        setOwnerId(res._id);
+      } else {
+        setErrorMsg("Your account is being reviewed and processed. Please take the time to edit your username or avatar by clicking the icon above. Your league commissioner will let you know when you are approved and can sign into the draft.")
+      }
+    }
+  }, [userId]);
+
   const getSelectOptions = (): string[] => {
     const options: string[] = [];
-    const filteredLeagues: LeagueListItem[] = leagues.filter(
-      (league) => !TEST_LEAGUE_IDS.includes(league._id)
-    );
-    if (process.env.NODE_ENV !== 'development') {
-      filteredLeagues.forEach((league: LeagueListItem) => {
+      userLeagues.forEach((league: LeagueListItem) => {
         options.push(league.name);
       });
-    } else {
-      leagues.forEach((league: LeagueListItem) => {
-        options.push(league.name);
-      });
-    }
     return options;
   };
 
   const handleSelectChange = (option: string) => {
-    const league = leagues.filter((league) => league.name === option);
+    const league = userLeagues.filter((league) => league.name === option);
     setSelectedLeagueId(league[0]._id);
-    setShowNameInput(true);
   };
 
   const renderSelect = (): JSX.Element => {
@@ -81,78 +83,51 @@ const HomePage: React.FC = () => {
     );
   };
 
-  const userLogin = async () => {
-    if (selectedLeagueId) {
-      const newUser: UserLogin = {
-        name,
-        password,
+  const confirmLeague = () => {
+    if (userId && user && user.username && orgId) {
+      const signedInUser: User = {
+        _id: ownerId,
+        userId: userId,
+        name: user.username,
         leagueId: selectedLeagueId,
-      };
-      // try {
-      //   const loggedInUser: User = await login(newUser);
-      //   if (loggedInUser) {
-      //     localStorage.setItem(
-      //       LOCAL_STORAGE.JWT_TOKEN,
-      //       loggedInUser.accessToken
-      //     );
-      //     setCurrentUser(loggedInUser);
-      //     socket.emit('JoinRoom', loggedInUser.leagueId);
-      //     socket.emit('Hello', new Date(), "mock league id");
-      //     // history.push(ROUTES.APP);
-      //     router.push('/bigboard')
-      //   }
-      // } catch (err) {
-      //   setErrorMsg(err.message);
-      // }
-
-
-      // !_____mocking login until auth solution implemented
-      const devTestingtOwnerIds = {
-        a: "612efd69ebec27001777f328",
-        b: "612efd75ebec27001777f329",
-        c: "612efd84ebec27001777f32a"
-      };
-      const userId: string = devTestingtOwnerIds[name];
-      console.log('userId', userId);
-      
-      const loggedInUser: User =  {
-        _id: userId,
-        name: name,
-        leagueId: selectedLeagueId,
-        isCommish: name === "a",
-        accessToken: "noTokenNeeded"
+        isCommish: orgRole === "org:commissioner",
       }
-      setCurrentUser(loggedInUser);
-      socket.emit('JoinRoom', loggedInUser.leagueId);
-      socket.emit('Hello', loggedInUser.name, loggedInUser.leagueId);
+      setCurrentUser(signedInUser);
+      socket.emit('JoinRoom', signedInUser.leagueId);
+      socket.emit('Hello', signedInUser.name, signedInUser.leagueId);
       router.push('/bigboard')
     }
   };
 
-  React.useEffect(() => {
-    // console.log('user', user);
-  }, [user]);
+  // TODO:
+  // currently manually adding user into db with clerk userId for dev testing
+  // after sign in => check if user exists in Owner db, add?
 
-  React.useEffect(() => {
-    // console.log('name', name);
-    setShowPasswordInput(name.length > 0);
-  }, [name]);
-
-  React.useEffect(() => {
-    setShowLoginBtn(password.length > 0);
-  }, [password]);
-
-  React.useEffect(() => {
-    if (devTesting) {
-      setShowNameInput(devTesting);
-      setSelectedLeagueId("5f3d99a25d018c175707cb4e");
+  // get signed in user's organizations (leagues)
+  useEffect(() => {
+    if (user && !isEmpty(allLeagues)) {
+      const userLeaguesList: LeagueListItem[] = [];
+      user.organizationMemberships.forEach((org) => {
+        //working on condition that for now each owner in the db has only one leagueId assigned
+        const league = allLeagues.find((league) => league.orgId === org.organization.id)
+        if (league) {
+          userLeaguesList.push(league);
+        }
+      })
+      setUserLeagues(userLeaguesList);
     }
-  }, [devTesting]);
+  }, [user, allLeagues])
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (userId) {
+      getIdFromUserId();
+    }
+  }, [getIdFromUserId, userId])
+
+  useEffect(() => {
     initLeagues();
   }, []);
-
+  
   return (
     <Page>
       <TopBlock>
@@ -161,40 +136,37 @@ const HomePage: React.FC = () => {
         </LogoContainer>
       </TopBlock>
       <Content>
-        <SignIn>SIGN IN</SignIn>
-        {isEmpty(leagues) && (
-          <LoadingMsg>Loading leagues...</LoadingMsg>
-        )}
-        {!isEmpty(leagues) && !devTesting && (
-          <ContentItem>{renderSelect()}</ContentItem>
-        )}
-        {devTesting && (
-          <LoadingMsg>DEV TESTING</LoadingMsg>
-        )}
-        {showNameInput && (
+        <Show when="signed-out">
           <ContentItem>
-            <Input
-              type="text"
-              placeholder="Name"
-              onTextChange={(text) => setName(text)}
-            />
+            <Title>Welcome</Title>
+            <IntroText>{`The best draft app in the world is currently only available to members with invitations. Please check your email for a sign up link if you have been invited by your league's commissioner.`}</IntroText>
+            <ButtonContainer>
+              <SignInButton >
+                <Button alternate onClick={() => null}>Sign In</Button>
+              </SignInButton>
+            </ButtonContainer>
           </ContentItem>
-        )}
-        {showPasswordInput && (
+        </Show>
+        <Show when="signed-in">
           <ContentItem>
-            <Input
-              type="password"
-              placeholder="Password"
-              onTextChange={(text) => setPassword(text)}
-            />
+            <IntroText>Welcome back, </IntroText>
+            <Title>{user?.username}</Title>
+            <UserButton />
+            {!isEmpty(errorMsg) ? (
+              <ErrorMsg>{errorMsg}</ErrorMsg>
+            ) : (
+              <ContentItem>
+                <IntroText>Please select your league below:</IntroText>
+                <ContentItem>{renderSelect()}</ContentItem>
+                {ownerId && selectedLeagueId && (
+                  <ButtonContainer>
+                    <Button alternate onClick={() => confirmLeague()}>{`Let's Go!`}</Button>
+                  </ButtonContainer>
+                )}
+              </ContentItem>
+            )}
           </ContentItem>
-        )}
-        {showLoginBtn && (
-          <BtnBlock>
-            <Button onClick={() => userLogin()}>sign in</Button>
-          </BtnBlock>
-        )}
-        {!isEmpty(errorMsg) && <ErrorMsg>{errorMsg}</ErrorMsg>}
+        </Show>
       </Content>
     </Page>
   );

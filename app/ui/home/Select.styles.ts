@@ -3,27 +3,28 @@ import { COLORS, FONTS } from '@/app/styles';
 
 const Box = styled.div`
   height: 32px;
-  max-width: 400px;
+  /* max-width: 400px; */
   padding-left: 0.5rem;
   display: flex;
   flex: 1;
   justify-content: space-between;
   align-items: center;
-`;
+  `;
 
 export const TitleBlock = styled(Box)`
   border-style: none;
-`;
+  `;
 
 export const TitleText = styled.p`
   margin: 0;
   font-family: ${FONTS.BLOCKLETTER};
   font-size: 1.5rem;
-  color: ${COLORS.PRIMARY_GREEN};
-`;
+  color: ${COLORS.SECONDARY_GRAY};
+  `;
 
 export const SelectBox = styled(Box)`
   border: 1px solid ${COLORS.SECONDARY_GRAY};
+  background-color: ${COLORS.WHITE};
 `;
 
 export const SelectBoxText = styled.p<{ $hasSelection: boolean }>`
@@ -47,7 +48,7 @@ export const OptionBox = styled(Box)`
   color: ${COLORS.SECONDARY_GRAY};
 
   &:hover {
-    color: ${COLORS.WHITE};
-    background-color: ${COLORS.PRIMARY_GREEN};
+    color: ${COLORS.PRIMARY_GREEN};
+    background-color: ${COLORS.WHITE};
   }
 `;

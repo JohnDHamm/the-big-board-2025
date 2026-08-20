@@ -1,18 +1,12 @@
 interface Owner {
   _id: string;
+  userId: string;
   name: string;
   leagueId: string;
+}
+
+interface Commish {
   isCommish: boolean;
 }
 
-interface AccessToken {
-  accessToken: string;
-}
-
-type User = (Owner & AccessToken) | null;
-
-interface Password {
-  password: string;
-}
-
-type UserLogin = Pick<Owner, 'name' | 'leagueId'> & Password;
+type User = Owner & Commish | null;

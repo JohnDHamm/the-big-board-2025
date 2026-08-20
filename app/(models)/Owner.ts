@@ -4,22 +4,22 @@ import dbConnect from "../lib/dbConnect";
 await dbConnect();
 
 export interface Owner extends mongoose.Document {
+  userId: string;
   name: string;
   leagueId: string;
-  isCommish: boolean;
 }
 
 const OwnerSchema = new mongoose.Schema<Owner>({
+  userId: {
+    type: String,
+    required: true,
+  },
   name: {
     type: String,
     required: true,
   },
   leagueId: {
     type: String,
-    required: true,
-  },
-  isCommish: {
-    type: Boolean,
     required: true,
   },
 });

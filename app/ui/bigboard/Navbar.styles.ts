@@ -48,6 +48,7 @@ export const TabsContainer = styled.div`
     width: 90%;
     justify-content: space-between;
     margin-right: 0;
+    margin-top: 0.5rem;
     padding-bottom: 0.25rem;
   }
 `;
@@ -103,3 +104,11 @@ export const Tab = styled.div<{ $active: boolean }>`
     margin-left: 0rem;
   }
 `;
+
+export const Profile = styled.div`
+  margin-left: 2rem;
+
+  @media screen and (${SCREEN_WIDTHS.TABLET}) {
+    margin-left: 0rem;
+  }
+`

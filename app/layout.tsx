@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from 'next/font/local'
 import "./globals.css";
- 
+import { ClerkProvider } from '@clerk/nextjs'
+
 const blockletter = localFont({
   src: '/assets/fonts/Blockletter.otf',
 })
@@ -25,7 +26,6 @@ import {
  } from "./contexts";
 import SocketListener from "@/app/sockets/SocketListener";
 
-
 export const metadata: Metadata = {
   title: "The Big Board",
   description: "Fantasy football draft app",
@@ -42,33 +42,35 @@ export default function RootLayout({
       <body
         className={`${blockletter.className} ${ptSansNarrow.className} antialiased`}
       >
-        <UserProvider>
-          <AlertContextProvider>
-            <CommishModalProvider>
-              <CurrentPickProvider>
-                <DraftProvider>
-                  <DraftStatusProvider>
-                    <TeamsProvider>
-                      <PlayersProvider>
-                        <PicksProvider>
-                          <MyTeamProvider>
-                            <PickConfirmModalProvider>
-                              <PickIsInModalModalProvider>
-                                <SocketListener>
-                                  {children}
-                                </SocketListener>
-                              </PickIsInModalModalProvider>
-                            </PickConfirmModalProvider>
-                          </MyTeamProvider>
-                        </PicksProvider>
-                      </PlayersProvider>
-                    </TeamsProvider>
-                  </DraftStatusProvider>
-                </DraftProvider>
-              </CurrentPickProvider>
-            </CommishModalProvider>
-          </AlertContextProvider>
-        </UserProvider>
+        <ClerkProvider>
+          <UserProvider>
+            <AlertContextProvider>
+              <CommishModalProvider>
+                <CurrentPickProvider>
+                  <DraftProvider>
+                    <DraftStatusProvider>
+                      <TeamsProvider>
+                        <PlayersProvider>
+                          <PicksProvider>
+                            <MyTeamProvider>
+                              <PickConfirmModalProvider>
+                                <PickIsInModalModalProvider>
+                                  <SocketListener>
+                                    {children}
+                                  </SocketListener>
+                                </PickIsInModalModalProvider>
+                              </PickConfirmModalProvider>
+                            </MyTeamProvider>
+                          </PicksProvider>
+                        </PlayersProvider>
+                      </TeamsProvider>
+                    </DraftStatusProvider>
+                  </DraftProvider>
+                </CurrentPickProvider>
+              </CommishModalProvider>
+            </AlertContextProvider>
+          </UserProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

@@ -34,7 +34,7 @@ const LoadingBlock = () => {
   //contexts
   const { setCurrentDraftPick } = useContext(CurrentPickContext);
   const { setCurrentDraft } = useContext(DraftContext);
-  const { setCurrentDraftStatus } = useContext(DraftStatusContext);
+  const { draftStatus, setCurrentDraftStatus } = useContext(DraftStatusContext);
   const { setCurrentMyTeam } = useContext(MyTeamContext);
   const { setCurrentPicks } = useContext(PicksContext);
   const { setCurrentPlayers } = useContext(PlayersContext);
@@ -44,6 +44,7 @@ const LoadingBlock = () => {
   //state
   const [league, setLeague] = useState<League>({
     _id: '',
+    orgId: '',
     name: '',
     draftOrder: [],
     draftStatus: 'not started',
@@ -273,14 +274,17 @@ const LoadingBlock = () => {
 
   useEffect(() => {
     if (teamsAreReady && playersAreReady && picksAreReady && myTeamIsReady) {
-      setTimeout(() => router.push('/bigboard/selections'), 500);
+      if (draftStatus !== 'not started') {
+        setTimeout(() => router.push('/bigboard/selections'), 500);
+      } else {
+        setTimeout(() => router.push('/bigboard/players'), 500);
+      }
     }
-  }, [myTeamIsReady, playersAreReady, teamsAreReady, picksAreReady, router]);
+  }, [myTeamIsReady, playersAreReady, teamsAreReady, picksAreReady, router, draftStatus]);
 
   return (
     <Container>
-      <Text>preparing draft data for</Text>
-      <LoadedText $loaded={true}>{league.name}</LoadedText>
+      <Text>preparing your draft data...</Text>
       <LoadBlock>
         <LoadedText $loaded={teamsAreReady}>NFL TEAMS</LoadedText>
         <LoadedText $loaded={playersAreReady}>NFL PLAYERS</LoadedText>
