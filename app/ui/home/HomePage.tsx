@@ -90,7 +90,7 @@ const HomePage: React.FC = () => {
         userId: userId,
         name: user.username,
         leagueId: selectedLeagueId,
-        isCommish: orgRole === "org:commissioner",
+        isCommish: orgRole === "org:admin",
       }
       setCurrentUser(signedInUser);
       socket.emit('JoinRoom', signedInUser.leagueId);
