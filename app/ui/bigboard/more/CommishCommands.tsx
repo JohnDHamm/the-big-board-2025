@@ -4,13 +4,14 @@ import React, { useContext } from "react";
 
 import { Container, CommishTitle, TitleBlock, ContentItem } from "./CommishCommands.styles";
 import Button from "@/app/ui/home/Button";
-import { UserContext } from "@/app/contexts";
+import { UserContext, DraftStatusContext } from "@/app/contexts";
 
 import { socket } from "@/app/sockets/socket";
 import updateDraftStatus from "@/app/api/Leagues/[id]/updateDraftStatus";
 
 const CommishCommands: React.FC = () => {
   const { user }= useContext(UserContext);
+  const { draftStatus } = useContext(DraftStatusContext);
 
   const startDraft = () => {
     if (user) {
@@ -48,17 +49,17 @@ const CommishCommands: React.FC = () => {
         <CommishTitle>Commissioner Control</CommishTitle>
       </TitleBlock>
       <ContentItem>
-        <Button onClick={() => startDraft()}>
+        <Button disabled={draftStatus !== "not started"} onClick={() => startDraft()}>
           <p>open the draft</p>
         </Button>
       </ContentItem>
       <ContentItem>
-        <Button onClick={() => pauseDraft()}>
+        <Button disabled={draftStatus !== "open"} onClick={() => pauseDraft()}>
           <p>pause the draft</p>
         </Button>
       </ContentItem>
       <ContentItem>
-        <Button onClick={() => reopenDraft()}>
+        <Button disabled={draftStatus !== "paused"} onClick={() => reopenDraft()}>
           <p>reopen the draft</p>
         </Button>
       </ContentItem>

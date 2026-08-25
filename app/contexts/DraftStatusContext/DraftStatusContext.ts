@@ -3,17 +3,17 @@
 import React from 'react';
 
 declare global {
-  interface DraftStatusContext {
+  interface DraftStatusContextInterface {
     draftStatus: DraftStatus;
     setCurrentDraftStatus: (draftStatus: DraftStatus) => void;
   }
 }
 
-export const DRAFT_STATUS_DEFAULT_VALUE: DraftStatusContext = {
+export const DRAFT_STATUS_DEFAULT_VALUE: DraftStatusContextInterface = {
   draftStatus: 'not started',
   setCurrentDraftStatus: () => '',
 };
 
-export const DraftStatusContext = React.createContext<DraftStatusContext>(
+export const DraftStatusContext = React.createContext<DraftStatusContextInterface>(
   DRAFT_STATUS_DEFAULT_VALUE
 );
