@@ -7,17 +7,20 @@ import { Container, CommishTitle, TitleBlock, ContentItem } from "./CommishComma
 import { DraftOrderBlock, DraftOrderNum, RowContent } from "./DraftOrderEntry.styles";
 import Button from "@/app/ui/home/Button";
 import OwnerSelect from "./OwnerSelect";
-import { UserContext, DraftStatusContext, DraftContext } from "@/app/contexts";
+import { UserContext, DraftContext, DraftStatusContext } from "@/app/contexts";
 import isEmpty from "lodash.isempty";
+
+import updateDraftOrder from "@/app/api/Leagues/[id]/updateDraftOrder";
 
 const DraftOrderEntry: React.FC = () => {
   const { user }= useContext(UserContext);
-  const { draftStatus } = useContext(DraftStatusContext);
   const { draft } = useContext(DraftContext);
+  const { draftStatus } = useContext(DraftStatusContext);
 
   const [ draftOrder, setDraftOrder ] = useState<DraftOrderList>({});
   const [ orderReady, setOrderReady ] = useState<boolean>(false);
   const [ ownerOptions, setOwnerOptions ] = useState<OwnerSelectOption[]>([]);
+  const [ message, setMessage ] = useState('');
 
   const { memberships } = useOrganization({
     memberships: { infinite: true },
@@ -38,7 +41,7 @@ const DraftOrderEntry: React.FC = () => {
       const newOption: OwnerSelectOption = {
         _id: owner._id,
         name: owner.name,
-        imageUrl: getImgUrl(owner._id)
+        imageUrl: getImgUrl(owner.userId)
       }
       options.push(newOption);
     })
@@ -46,7 +49,6 @@ const DraftOrderEntry: React.FC = () => {
   }
 
   const handleSelection = (i: number, option: string) => {
-    console.log('option selected #', i, option);
     setDraftOrder({
       ...draftOrder,
       [i]: option
@@ -72,12 +74,18 @@ const DraftOrderEntry: React.FC = () => {
   };
 
   const saveDraftOrder = () => {
-    if (draftOrder) {
-      // updateDraftStatus(user.leagueId, 'open')
-      // .then(() => {
-        // socket.emit('StartDraft', "Good luck to all!", user.leagueId);
-      // })
-      // .catch((err) => console.log('err', err));
+    if (draftOrder && user?.leagueId) {
+      const draftOrderSave: string[] = [];
+      for (let i = 1; i < draft.owners.length + 1; i++) {
+        draftOrderSave.push(draftOrder[i]);
+      }
+      updateDraftOrder(user.leagueId, draftOrderSave)
+        .then(()=> {
+          setMessage('draft order saved successfully');
+        }).catch((err) => {
+          console.log('err', err);
+          setMessage('error with saving draft order');
+        })
     }
   }
 
@@ -87,20 +95,29 @@ const DraftOrderEntry: React.FC = () => {
     }
   }, [draft.owners.length, draftOrder]);
 
+  useEffect(() => {
+    // console.log('memberships', memberships);
+  }, [memberships])
+
   return (
     <Container>
       <TitleBlock>
         <CommishTitle>Draft Order</CommishTitle>
       </TitleBlock>
-      {isEmpty(memberships?.data) ? (
+      {(!memberships?.data?.length) ? (
         <p>loading the memberships</p>
-      ) : (
+      ) : ((draftStatus === 'not started') ? (
         <ContentItem>{renderDraftOrder()}</ContentItem>
-      )}
+      ) : (
+        <p>draft started - cannot change the order now</p>
+      ))}
       <ContentItem>
         <Button disabled={!orderReady} onClick={() => saveDraftOrder()}>
           <p>save the draft order</p>
         </Button>
+        {message && (
+          <p>{message}</p>
+        )}
       </ContentItem>
     </Container>
   )

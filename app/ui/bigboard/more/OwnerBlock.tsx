@@ -12,8 +12,8 @@ const OwnerBlock: React.FC<Props> = ({ name, imgUrl}) => {
   return (
     <Container>
       <Avatar 
-        $imgUrl={imgUrl}
-        $alt={name}
+        src={imgUrl}
+        alt={name}
       />
       <OwnerName>{name}</OwnerName>
     </Container>

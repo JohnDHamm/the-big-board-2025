@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FONTS } from '@/app/styles';
+import { COLORS, FONTS } from '@/app/styles';
 
 export const Container = styled.div`
   display: flex;
@@ -8,13 +8,11 @@ export const Container = styled.div`
   padding: 10px;
 `;
 
-export const Avatar = styled.img<{ $imgUrl: string, $alt: string }>`
-  src: ${(props) => props.$imgUrl};
-  alt: ${(props) => props.$alt};
+export const Avatar = styled.img`
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  /* border: 1px solid red; */
+  border: 1px solid ${COLORS.DISABLED_GRAY};
 `;
 
 export const OwnerName = styled.p`
