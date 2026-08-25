@@ -34,6 +34,7 @@ export const OptionBox = styled(Box)`
   border: 1px solid ${COLORS.SECONDARY_GRAY};
 
   &:hover {
-    border: 2px solid ${COLORS.PRIMARY_GREEN};
+    border: 1px solid ${COLORS.PRIMARY_GREEN};
+    background-color: ${COLORS.PRIMARY_GREEN};
   }
 `;
