@@ -40,9 +40,7 @@ const meta = {
   decorators: [
     (Story) => (
       <ClerkProvider>
-        
-            <Story />
-
+        <Story />
       </ClerkProvider>
     )
   ]

@@ -18,5 +18,6 @@ export const Avatar = styled.img`
 export const OwnerName = styled.p`
   font-family: ${FONTS.NAMES};
   font-size: 1.5rem;
-  padding-left: 1rem;;
+  color: ${COLORS.SECONDARY_GRAY};
+  padding-left: .75rem;;
 `;

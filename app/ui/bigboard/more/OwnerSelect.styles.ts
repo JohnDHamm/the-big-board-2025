@@ -7,9 +7,11 @@ const Box = styled.div`
   flex: 1;
   justify-content: space-between;
   align-items: center;
+  width: 320px;
 `;
 
 export const SelectBox = styled(Box)`
+  height: 36px;
   border: 1px solid ${COLORS.SECONDARY_GRAY};
   background-color: ${COLORS.WHITE};
 `;
@@ -28,6 +30,7 @@ export const IconBlock = styled.div`
 `;
 
 export const OptionBox = styled(Box)`
+  height: 36px;
   border: 1px solid ${COLORS.SECONDARY_GRAY};
 
   &:hover {
